@@ -1,0 +1,28 @@
+{
+    "name": "spyrit/propel-datagrid-bundle",
+    "description": "Symfony2 Datagrid Bundle for Propel.",
+    "keywords": ["datagrid", "symfony", "propel"],
+    "homepage": "https://github.com/spyrit/DatagridBundle.git",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Maxime Corson",
+            "email": "maxime.corson@spyrit.net",
+            "role": "Developer"
+        },
+        {
+            "name": "Charles Henzel",
+            "email": "charles.henzel@spyrit.net",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "email": "support@spyrit.net"
+    },
+    "require": {
+        "php": ">=5.3.3",
+        "symfony/symfony": ">=2.4",
+        "propel/propel-bundle": ">=1.4"
+    }
+}
