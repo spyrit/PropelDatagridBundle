@@ -23,7 +23,8 @@
     "require": {
         "php": ">=5.3.3",
         "symfony/symfony": ">=2.4",
-        "propel/propel-bundle": ">=1.2"
+        "propel/propel-bundle": ">=1.2",
+        "csanquer/colibri-csv": "1.0.*"
     },
     "autoload": {
         "psr-0": { "Spyrit\\PropelDatagridBundle": "" }
