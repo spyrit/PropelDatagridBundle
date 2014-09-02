@@ -219,6 +219,11 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         }
     }
     
+    public function configureFilter()
+    {
+        return array();
+    }
+    
     /**
      * @param type $name
      * @param type $params
