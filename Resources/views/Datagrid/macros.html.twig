@@ -1,0 +1,20 @@
+{% macro sort(column, label, route, datagrid) %}
+    {% if datagrid.sortColumn == column %}
+        {% if datagrid.sortOrder == 'desc' %} 
+            {% set order = 'asc' %}
+            {% set icon = 'fa-chevron-down' %}
+        {% else %}
+            {% set order = 'desc' %}
+            {% set icon = 'fa-chevron-up' %}
+        {%endif %}
+    {% else %}
+        {% set order = datagrid.defaultSort.order %}
+    {% endif %}
+    
+    <a href="{{ path(route, { (datagrid.actionParameterName) : datagrid.sortActionParameterName, (datagrid.sortColumnParameterName): column, (datagrid.sortOrderParameterName) : order } ) }}">
+        {{ label }} 
+    </a> 
+    {% if datagrid.sortColumn == column %}
+    <i class="fa {{ icon }}"></i>
+    {% endif %}
+{% endmacro %}

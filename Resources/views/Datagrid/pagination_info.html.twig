@@ -1,0 +1,8 @@
+<div class="pagination-info">
+{% set pager = datagrid.pager %}
+{% if pager.results|length < datagrid.results|length %}
+{{ pager.results|length }} {{ "records on" }} {{ datagrid.results|length }} {{ "results" }}
+{% else %}
+{{ pager.results|length }} {{ "results" }}
+{% endif %}
+</div>

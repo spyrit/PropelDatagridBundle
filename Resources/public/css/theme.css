@@ -1,0 +1,318 @@
+/* 
+    Created on : 2 sept. 2014, 11:25:05
+    Author     : Maxime CORSON <maxime.corson@spyrit.net>
+*/
+
+/* Structure */
+
+body {
+    background: #F7F7FA;
+    /* font-family: 'latoregular', 'sans sherif', arial; */
+    font-family: 'lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 1.7em;
+    color: #506B86;
+}
+
+h1, h2, h3, h4, h5, h6, h7 {
+    font-family: 'lato', 'sans sherif', arial;
+    margin-top: 5px;
+    font-weight: 300;
+    margin-bottom: 20px;
+    color: #e67e22;
+}
+
+.panel {
+    min-height: 20px;
+    margin-bottom: 20px;
+    background-color: #FFFFFF;
+    border-radius: 2px;
+    border: 1px solid #ECECEC;
+    border-bottom: 3px solid #ECECEC;
+}
+
+.panel-default > .panel-heading,
+.panel-heading,
+.panel-footer {
+    border-color: #ECECEC;
+    background-color: rgb(253, 254, 255)
+}
+
+.panel.transparent {
+    background-color: transparent;
+    border: none;
+}
+
+/* Formulaires */
+
+.form-control {
+    border-radius: 2px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border-color: #DDD;
+    height: 33px;
+    padding: 5px 10px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.form-inline .form-control {
+    width: 100%;
+}
+
+.form-group-has-error .help-block,
+.form-group.has-error .help-block,
+tr.has-error .help-block, 
+tr.has-error label.control-label {
+    color: #e67e22;
+    margin-bottom: 0;
+    line-height: 1.3em;
+}
+
+.form-group.has-error .control-label {
+    color: inherit;
+}
+
+.form-group-has-error .form-control,
+.form-group.has-error .form-control {
+    border-color: #e67e22;
+}
+
+.form-group-has-error ul,
+.form-group.has-error ul,
+tr.has-error ul{
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.form-group-has-error ul li,
+.form-group.has-error ul li,
+tr.has-error ul li{
+    list-style: none;
+}
+
+.input-group-addon {
+    background-color: #FAFAFA;
+    border-radius: 2px;
+}
+
+.has-error .input-group-addon {
+    color: #E67022;
+    background-color: #FFF0E4;
+    border-color: #e67e22;
+}
+
+.selectize-control {
+    margin-bottom: -10px;
+}
+
+label {
+    font-weight: normal;
+}
+
+.btn {
+    border-radius: 2px;
+}
+
+.btn.btn-primary {
+    background: #e67e22;
+    border: none;
+    border-bottom: 2px solid #d35400;
+}
+
+.btn.btn-primary:hover,
+.btn.btn-primary:focus, 
+.btn.btn-primary:active, 
+.btn.btn-primary.active, 
+.open .dropdown-toggle.btn-primary {
+    background: #EB964C;
+    border-color: #D37D44;
+}
+
+.btn.btn-success {
+    background: #1abc9c;
+    border: none;
+    border-bottom: 2px solid #16a085;
+}
+
+.btn.btn-success:hover,
+.btn.btn-success:focus, 
+.btn.btn-success:active, 
+.btn.btn-success.active, 
+.open .dropdown-toggle.btn-success {
+    background: #16a085;
+    border-color: #148871;
+}
+
+.btn.btn-info {
+    background: #3498db;
+    border: none;
+    border-bottom: 2px solid #2980b9;
+}
+
+.btn.btn-info:hover,
+.btn.btn-info:focus, 
+.btn.btn-info:active, 
+.btn.btn-info.active, 
+.open .dropdown-toggle.btn-info{
+    background: #59A7DB;
+    border-color: #468DBB;
+}
+
+.btn.btn-default {
+    background: #95a5a6;
+    border: none;
+    border-bottom: 2px solid #7f8c8d;
+    color: white;
+}
+
+.btn.btn-default:hover,
+.btn.btn-default:focus, 
+.btn.btn-default:active, 
+.btn.btn-default.active, 
+.open .dropdown-toggle.btn-default {
+    color: white;
+    background: #A2AEAF;
+    border-color: #919C9C;
+}
+
+.btn.btn-danger {
+    background: #e74c3c;
+    border: none;
+    border-bottom: 2px solid #c0392b;
+}
+
+.btn.btn-danger:hover,
+.btn.btn-danger:focus, 
+.btn.btn-danger:active, 
+.btn.btn-danger.active, 
+.open .dropdown-toggle.btn-danger {
+    background: #c0392b;
+    border-color: #922B20;
+}
+
+fieldset legend {
+    padding-bottom: 7px;
+    border-bottom: 1px solid #eee;
+}
+
+.dl-horizontal dt, 
+.dl-horizontal dd {
+    margin-bottom: 5px;
+}
+
+/* table */
+
+th {
+    font-weight: normal;
+}
+
+.table tr[data-href],
+.table tr[data-fancybox-href]{
+    cursor: pointer;
+}
+
+.table tr[data-href] td.disable-link,
+.table tr[data-fancybox-href] td.disable-link{
+    cursor: default;
+}
+
+.table tr th,
+strong {
+    font-family: 'latoregular', 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+}
+
+.table-bordered,
+.table > thead > tr > th, 
+.table > tbody > tr > th, 
+.table > tfoot > tr > th, 
+.table > thead > tr > td, 
+.table > tbody > tr > td, 
+.table > tfoot > tr > td {
+    border-color: #F3F3F3;
+}
+
+.table > thead > tr > th, 
+.table > tbody > tr > th, 
+.table > tfoot > tr > th, 
+.table > thead > tr > td, 
+.table > tbody > tr > td, 
+.table > tfoot > tr > td {
+    padding: 5px 10px;
+}
+
+.table-hover > tbody > tr:hover > td, 
+.table-hover > tbody > tr:hover > th{
+    background-color: #FFFCF9;
+}
+
+.block.skinny .table {
+    margin-bottom: 0;
+    border: none;
+}
+
+.table.evaluation th {
+    font-family: inherit;
+}
+
+.table.evaluation > thead > tr > th, 
+.table.evaluation > tbody > tr > th, 
+.table.evaluation > tfoot > tr > th, 
+.table.evaluation > thead > tr > td, 
+.table.evaluation > tbody > tr > td, 
+.table.evaluation > tfoot > tr > td {
+    padding: 8px;
+}
+
+.center-block {
+    float:none;
+}
+
+.fancybox-overlay {
+    background: rgba(255,255,255,0.5);
+}
+
+.big-text {
+    font-size: 1.6em;
+    line-height: 1.3em;
+}
+
+.pagination {
+    margin: 0 0;
+}
+
+.pagination>li>a, 
+.pagination>li>span {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+.pagination>li:first-child>a, 
+.pagination>li:first-child>span {
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+}
+
+.pagination>li:last-child>a, 
+.pagination>li:last-child>span {
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+}
+
+.pagination-info {
+    float: right;
+}
+
+.mr0 { margin-right: 0px; }
+.mr10 { margin-right: 10px; }
+.mr20 { margin-right: 20px; }
+.mt0 { margin-top: 0px; }
+.mt10 { margin-top: 10px; }
+.mt20 { margin-top: 20px; }
+.mb0 { margin-bottom: 0px; }
+.mb10 { margin-bottom: 10px; }
+.mb20 { margin-bottom: 20px; }
+.ml0 { margin-left: 0px; }
+.ml10 { margin-left: 10px; }
+.ml20 { margin-left: 20px; }
