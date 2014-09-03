@@ -1,6 +1,6 @@
 spyrit_propel_datagrid_list:
-    pattern: /datagrid/demo/book/list/{action}/{param1}/{param2}
-    defaults: { _controller: SpyritPropelDatagridBundle:Demo:list, action: null, param1: null, param2: null }
+    pattern: /datagrid/demo/book/list/{action}/{datagrid}/{param1}/{param2}
+    defaults: { _controller: SpyritPropelDatagridBundle:Demo:list, action: null, datagrid: null, param1: null, param2: null }
     
 spyrit_propel_datagrid_export:
     pattern: /datagrid/demo/book/export/{name}

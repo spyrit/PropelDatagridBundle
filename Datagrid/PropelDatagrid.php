@@ -3,7 +3,6 @@
 namespace Spyrit\PropelDatagridBundle\Datagrid;
 
 use Spyrit\PropelDatagridBundle\Datagrid\PropelDatagridInterface;
-use Spyrit\PropelDatagridBundle\Helper\Inflector;
 
 /**
  * Datagrid management class that support and handle pagination, sort, filter
@@ -43,10 +42,18 @@ abstract class PropelDatagrid implements PropelDatagridInterface
      */
     protected $maxPerPage;
     
-    public function __construct($container)
+    /**
+     * Options that you can use in your Datagrid methods if you need
+     * (Will be deprecated if not used)
+     * @var integer 
+     */
+    protected $options;
+    
+    public function __construct($container, $options = array())
     {
         $this->container = $container;
         $this->query = $this->configureQuery();
+        $this->options = $options;
         $this->buildForm();
     }
     
@@ -87,9 +94,9 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         return;
     }
     
-    protected function filter()
+    private function filter()
     {
-        if($this->getRequest()->isMethod('post'))
+        if($this->getRequest()->isMethod('post') && $this->getRequest()->get($this->filter->getForm()->getName()))
         {
             $data = $this->getRequest()->get($this->filter->getForm()->getName());
         }
@@ -100,7 +107,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         
         $this->filter->submit($data);
         $form = $this->filter->getForm();
-        $data = $form->getData();
+        $formData = $form->getData();
         
         if($form->isValid())
         {
@@ -108,30 +115,30 @@ abstract class PropelDatagrid implements PropelDatagridInterface
             {
                 $this->getRequest()->getSession()->set($this->getSessionName().'.filter', $data);
             }
-            
-            foreach($data as $key => $value)
-            {
-                if($value)
-                {
-                    $method = 'filterBy'.$this->container->get('spyrit.util.inflector')->camelize($key);
-
-                    if($this->filter->getType($key) == FilterObject::TYPE_TEXT)
-                    {
-                        $this->getQuery()->$method('%'.$value.'%', \Criteria::LIKE);
-                    }
-                    elseif($this->filter->getType($key) == FilterObject::TYPE_MODEL)
-                    {
-                        $this->getQuery()->$method($value);
-                    }
-                    elseif($this->filter->getType($key) == FilterObject::TYPE_DATE)
-                    {
-                        $this->getQuery()->$method($value);
-                    }
-                }
-            }
+            $this->applyFilter($formData);
         }
         
         return $this;
+    }
+    
+    private function applyFilter($data)
+    {
+        foreach($data as $key => $value)
+        {
+            if($value)
+            {
+                $method = 'filterBy'.$this->container->get('spyrit.util.inflector')->camelize($key);
+
+                if($this->filter->getType($key) === 'text')
+                {
+                    $this->getQuery()->$method('%'.$value.'%', \Criteria::LIKE);
+                }
+                else
+                {
+                    $this->getQuery()->$method($value);
+                }
+            }
+        }
     }
     
     protected function sort()
@@ -140,7 +147,10 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         
         $sort = $this->getSession()->get($namespace)? $this->getSession()->get($namespace) : $this->getDefaultSort();
         
-        if($this->getRequest()->get($this->getActionParameterName()) == $this->getSortActionParameterName())
+        if(
+            $this->getRequest()->get($this->getActionParameterName()) == $this->getSortActionParameterName() &&
+            $this->getRequest()->get($this->getDatagridParameterName()) == $this->getName()
+        )
         {
             $sort['column'] = $this->getRequest()->get($this->getSortColumnParameterName());
             $sort['order'] = $this->getRequest()->get($this->getSortOrderParameterName());
@@ -185,9 +195,13 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     
     public function reset()
     {
-        return $this
-            ->resetFilters()
-            ->resetSort();
+        if($this->getRequest()->get($this->getDatagridParameterName()) == $this->getName())
+        {
+            return $this
+                ->resetFilters()
+                ->resetSort();
+        }
+        return $this;
     }
     
     public function resetFilters()
@@ -284,8 +298,11 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     public function getCurrentPage($default = 1)
     {
         $name = $this->getSessionName().'.'.$this->getPageParameterName();
-        $page = $this->getRequest()->get($this->getPageParameterName());
-        if(!$page)
+        if($this->getRequest()->get($this->getDatagridParameterName()) == $this->getName())
+        {
+            $page = $this->getRequest()->get($this->getPageParameterName());
+        }
+        if(!isset($page))
         {
             $page = $this->getRequest()->getSession()->get($name, $default);
         }
@@ -307,6 +324,11 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     public function getPageActionParameterName()
     {
         return 'page';
+    }
+    
+    public function getDatagridParameterName()
+    {
+        return 'datagrid';
     }
     
     public function getPageParameterName()
@@ -341,7 +363,9 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     
     public function configureFilterBuilder($builder)
     {
-        // Do what you want with the builder
+        /**
+         * Do what you want with the builder. For example, add Event Listener PRE/POST_SET_DATA, etc.
+         */
         return;
     }
     
@@ -367,7 +391,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
      * return the Form Factory Service
      * @return \Symfony\Component\Form\FormFactory
      */
-    public function getFormFactory()
+    protected function getFormFactory()
     {
         return $this->container->get('form.factory');
     }
@@ -391,5 +415,56 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     public function getPager()
     {
         return $this->getResults();
+    }
+    
+    /**
+     * Generate pagination route
+     * @param type $route
+     * @param type $extraParams
+     * @return type
+     */
+    public function getPaginationPath($route, $page, $extraParams = array())
+    {
+        $params = array(
+            $this->getActionParameterName() => $this->getPageActionParameterName(),
+            $this->getDatagridParameterName() => $this->getName(),
+            $this->getPageParameterName() => $page,
+        );
+        return $this->container->get('router')->generate($route, array_merge($params, $extraParams));
+    }
+    
+    /**
+     * Generate reset route for the button view
+     * @param type $route
+     * @param type $extraParams
+     * @return type
+     */
+    public function getResetPath($route, $extraParams = array())
+    {
+        $params = array(
+            $this->getActionParameterName() => $this->getResetActionParameterName(),
+            $this->getDatagridParameterName() => $this->getName(),
+        );
+        return $this->container->get('router')->generate($route, array_merge($params, $extraParams));
+    }
+    
+    /**
+     * Generate sorting route for a given column to be displayed in view
+     * @todo Remove the order parameter and ask to the datagrid to guess it ?
+     * @param type $route
+     * @param type $column
+     * @param type $order
+     * @param type $extraParams
+     * @return type
+     */
+    public function getSortPath($route, $column, $order, $extraParams = array())
+    {
+        $params = array(
+            $this->getActionParameterName() => $this->getSortActionParameterName(),
+            $this->getDatagridParameterName() => $this->getName(),
+            $this->getSortColumnParameterName() => $column,
+            $this->getSortOrderParameterName() => $order,
+        );
+        return $this->container->get('router')->generate($route, array_merge($params, $extraParams));
     }
 }

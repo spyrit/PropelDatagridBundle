@@ -8,8 +8,7 @@
 <ul class="pagination">
     {% if pages[0] != pager.firstPage %}
     <li>
-        {% set parameters = extraParameters|merge({ (datagrid.actionParameterName) : datagrid.pageActionParameterName, (datagrid.pageParameterName) : pager.firstPage }) %}
-        <a href="{{ path(route, parameters) }}" title="{{ 'page'}} {{ pager.firstPage }}" class="{% if pager.firstPage == pager.page %}active{% endif %}" >{{ pager.firstPage }}</a>
+        <a href="{{ datagrid.getPaginationPath(route, pager.firstPage, extraParameters) }}" title="{{ 'page'}} {{ pager.firstPage }}" class="{% if pager.firstPage == pager.page %}active{% endif %}" >{{ pager.firstPage }}</a>
     </li>
     {% if pages[0] > (pager.firstPage + 1) %}
     <li><a href="#">...</a></li>
@@ -17,8 +16,7 @@
     {% endif %}
     {% for page in pages %}
     <li class="{% if pager.page == page %}active{% endif %}">
-        {% set parameters = extraParameters|merge({ (datagrid.actionParameterName) : datagrid.pageActionParameterName, (datagrid.pageParameterName) : page }) %}
-        <a href="{{ path(route, parameters) }}" title="{{ 'page'}} {{ page }}" class="{% if page == pager.page %}active{% endif %}">{{ page }}</a>
+        <a href="{{ datagrid.getPaginationPath(route, page, extraParameters) }}" title="{{ 'page'}} {{ page }}" class="{% if page == pager.page %}active{% endif %}">{{ page }}</a>
     </li>
     {% endfor %}
     {% if pages[(links-1)] is defined and pages[(links-1)] < (pager.lastPage - 1) %}
@@ -26,8 +24,7 @@
     {% endif %}
     {% if pages[(links-1)] is defined and pages[(links-1)] != pager.lastPage %}
     <li>
-        {% set parameters = extraParameters|merge({ (datagrid.actionParameterName) : datagrid.pageActionParameterName, (datagrid.pageParameterName) : pager.lastPage }) %}
-        <a href="{{ path(route, parameters) }}" title="{{ 'page'}} {{ pager.lastPage }}" class="{% if pager.lastPage == pager.page %}active{% endif %}" >{{ pager.lastPage }}</a>
+        <a href="{{ datagrid.getPaginationPath(route, page.lastPage, extraParameters) }}" title="{{ 'page'}} {{ pager.lastPage }}" class="{% if pager.lastPage == pager.page %}active{% endif %}" >{{ pager.lastPage }}</a>
     </li>
     {% endif %}
 </ul>

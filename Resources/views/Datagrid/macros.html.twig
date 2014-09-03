@@ -11,7 +11,7 @@
         {% set order = datagrid.defaultSort.order %}
     {% endif %}
     
-    <a href="{{ path(route, { (datagrid.actionParameterName) : datagrid.sortActionParameterName, (datagrid.sortColumnParameterName): column, (datagrid.sortOrderParameterName) : order } ) }}">
+    <a href="{{ datagrid.sortPath(route, column, order) }}">
         {{ label }} 
     </a> 
     {% if datagrid.sortColumn == column %}

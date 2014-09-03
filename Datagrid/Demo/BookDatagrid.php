@@ -20,10 +20,13 @@ class BookDatagrid extends PropelDatagrid
         return array(
             'id' => array(
                 // This is the classic form type
-                'type' => 'text',
+                'type' => 'integer',
                 // Following options are the classic FormType options
                 'options' => array(
                     'required' => false,
+                    'constraints' => array(
+                        new \Symfony\Component\Validator\Constraints\NotBlank
+                    )
                 ),
             ),
             'title' => array(
@@ -81,7 +84,7 @@ class BookDatagrid extends PropelDatagrid
      */
     public function getMaxPerPage()
     {
-        return 15;
+        return 8;
     }
 
     /**

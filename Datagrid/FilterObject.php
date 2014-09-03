@@ -17,13 +17,7 @@ class FilterObject
 
     protected $builder;
     
-    protected $name;
-    
     protected $form;
-    
-    const TYPE_MODEL = 'model';
-    const TYPE_TEXT = 'text';
-    const TYPE_DATE = 'date';
     
     public function __construct(FormFactory $factory, $name, $options = array('csrf_protection' => false))
     {
@@ -42,7 +36,6 @@ class FilterObject
     public function submit($data)
     {
         $this->data = $data;
-        
         $this->form = $this->getForm();
         $this->form->submit($this->data);
     }
