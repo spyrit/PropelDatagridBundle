@@ -3,10 +3,10 @@ parameters:
     database_host:     127.0.0.1
     database_port:     ~
     database_name:     bookstore
-    database_user:     root
+    database_user:     travis
     database_password: ~
     locale:            en
-    secret:            ThisTokenIsNotSoSecretChangeIt
+    secret:            dz7am99bonp0tbd215iznv2571bwffq3pri6966710484fy0
     debug_toolbar:          true
     debug_redirects:        false
     use_assetic_controller: true
