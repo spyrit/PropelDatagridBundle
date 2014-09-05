@@ -7,8 +7,8 @@ php:
     - hhvm
 
 before_script: 
-	- cp Tests/Fixtures/App/app/config/parameters.yml.dist Tests/Fixtures/App/app/config/parameters.yml
-	- composer install --dev
-	- ./Tests/Fixtures/App/app/console propel:database:create
-	- ./Tests/Fixtures/App/app/console propel:sql:insert
-	- ./Tests/Fixtures/App/app/console propel:build
+    - cp Tests/Fixtures/App/app/config/parameters.yml.dist Tests/Fixtures/App/app/config/parameters.yml
+    - composer install --dev
+    - ./Tests/Fixtures/App/app/console propel:database:create
+    - ./Tests/Fixtures/App/app/console propel:sql:insert
+    - ./Tests/Fixtures/App/app/console propel:build
