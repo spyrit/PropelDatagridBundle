@@ -1,6 +1,6 @@
 <?php
 
-namespace Spyrit\PropelDatagridBundle\Propel;
+namespace Spyrit\TestBundle\Propel;
 
 use Spyrit\PropelDatagridBundle\Propel\om\BasePublisher;
 

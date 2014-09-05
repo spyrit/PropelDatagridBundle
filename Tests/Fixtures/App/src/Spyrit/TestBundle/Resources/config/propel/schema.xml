@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
-<database name="bookstore" namespace="Spyrit\PropelDatagridBundle\Propel" defaultIdMethod="native"
+<database name="bookstore" namespace="Spyrit\TestBundle\Propel" defaultIdMethod="native"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/propelorm/Propel/master/generator/resources/xsd/database.xsd">
 
