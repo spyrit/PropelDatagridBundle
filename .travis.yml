@@ -4,7 +4,6 @@ php:
     - 5.4
     - 5.5
     - 5.6
-    - hhvm
 
 before_script: 
     - cp Tests/Fixtures/App/app/config/parameters.yml.dist Tests/Fixtures/App/app/config/parameters.yml
@@ -12,3 +11,8 @@ before_script:
     - ./Tests/Fixtures/App/app/console propel:database:create
     - ./Tests/Fixtures/App/app/console propel:sql:insert
     - ./Tests/Fixtures/App/app/console propel:build
+
+notifications:
+  email:
+    - maxime.corson@spyrit.net
+    - charles.henzel@spyrit.net
