@@ -4,10 +4,10 @@ namespace Spyrit\PropelDatagridBundle\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class DemoControllerTest extends WebTestCase
+class PagerTest extends WebTestCase
 {
-    public function testIndex()
+    public function testResults()
     {
-        // Comming soon ...
+        
     }
 }

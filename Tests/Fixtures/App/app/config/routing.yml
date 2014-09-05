@@ -1,0 +1,2 @@
+#spyrit_propel_datagrid:
+#    resource: "@SpyritPropelDatagridBundle/Resources/config/routing.yml"
