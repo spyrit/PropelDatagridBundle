@@ -45,7 +45,7 @@ You won't be surprised to be asked to add the following line in your Kernel :
 
 ### Try the demo
 
-A demo is included in the bundle. To try it, follow these few steps :
+A demo is included in the demo branch which is updated with the master updates. To try it, follow these few steps :
 
 1. Build your model
 ```bash
