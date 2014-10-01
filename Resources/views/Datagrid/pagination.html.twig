@@ -24,7 +24,7 @@
     {% endif %}
     {% if pages[(links-1)] is defined and pages[(links-1)] != pager.lastPage %}
     <li>
-        <a href="{{ datagrid.getPaginationPath(route, page.lastPage, extraParameters) }}" title="{{ 'page'}} {{ pager.lastPage }}" class="{% if pager.lastPage == pager.page %}active{% endif %}" >{{ pager.lastPage }}</a>
+        <a href="{{ datagrid.getPaginationPath(route, pager.lastPage, extraParameters) }}" title="{{ 'page'}} {{ pager.lastPage }}" class="{% if pager.lastPage == pager.page %}active{% endif %}" >{{ pager.lastPage }}</a>
     </li>
     {% endif %}
 </ul>
