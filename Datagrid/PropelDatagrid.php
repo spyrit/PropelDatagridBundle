@@ -125,7 +125,21 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     {
         foreach($data as $key => $value)
         {
-            if($value)
+            $empty = true;
+            
+            if(($value instanceof \PropelCollection || is_array($value)))
+            {
+                if(count($value) > 0)
+                {
+                    $empty = false;
+                }
+            }
+            elseif($value)
+            {
+                $empty = false;
+            }
+            
+            if(!$empty)
             {
                 $method = 'filterBy'.$this->container->get('spyrit.util.inflector')->camelize($key);
 
