@@ -134,7 +134,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
                     $empty = false;
                 }
             }
-            elseif($value)
+            elseif(!empty($value) || $value === 0)
             {
                 $empty = false;
             }
