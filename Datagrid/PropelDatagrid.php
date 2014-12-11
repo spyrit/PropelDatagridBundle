@@ -3,6 +3,7 @@
 namespace Spyrit\PropelDatagridBundle\Datagrid;
 
 use Spyrit\PropelDatagridBundle\Datagrid\PropelDatagridInterface;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * Datagrid management class that support and handle pagination, sort, filter
@@ -145,7 +146,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
 
                 if($this->filter->getType($key) === 'text')
                 {
-                    $this->getQuery()->$method('%'.$value.'%', \Criteria::LIKE);
+                    $this->getQuery()->$method('%'.$value.'%', Criteria::LIKE);
                 }
                 else
                 {
@@ -367,7 +368,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     
     public function getDefaultSortOrder()
     {
-        return strtolower(\Criteria::ASC);
+        return strtolower(Criteria::ASC);
     }
     
     public function configureFilterForm()
