@@ -21,7 +21,7 @@
         "email": "support@spyrit.net"
     },
     "require": {
-        "php": "5.3",
+        "php": ">=5.3.3",
         "symfony/symfony": "2.3",
         "propel/propel-bundle": "2.0.x-dev",
         "csanquer/colibri-csv": "~1.0"
