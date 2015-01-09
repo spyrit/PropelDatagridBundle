@@ -97,7 +97,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     
     private function filter()
     {
-        if($this->getRequest()->isMethod('post') && $this->getRequest()->get($this->filter->getForm()->getName()))
+        if(in_array($this->getRequest()->getMethod(), array_map('strtoupper', $this->getAllowedFilterMethods())) && $this->getRequest()->get($this->filter->getForm()->getName()))
         {
             $data = $this->getRequest()->get($this->filter->getForm()->getName());
         }
@@ -112,7 +112,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         
         if($form->isValid())
         {
-            if($this->getRequest()->isMethod('post'))
+            if(in_array($this->getRequest()->getMethod(), array_map('strtoupper', $this->getAllowedFilterMethods())))
             {
                 $this->getRequest()->getSession()->set($this->getSessionName().'.filter', $data);
             }
@@ -139,7 +139,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
             {
                 $empty = false;
             }
-            
+ 
             if(!$empty)
             {
                 $method = 'filterBy'.$this->container->get('spyrit.util.inflector')->camelize($key);
@@ -150,6 +150,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
                 }
                 else
                 {
+                    
                     $this->getQuery()->$method($value);
                 }
             }
@@ -384,6 +385,11 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         return;
     }
     
+    public function getAllowedFilterMethods()
+    {
+        return array('post');
+    }
+    
     /**
      * Shortcut to return the request service.
      * @return \Symfony\Component\HttpFoundation\Request
@@ -430,6 +436,13 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     public function getPager()
     {
         return $this->getResults();
+    }
+    
+    public function setFilterValue($name, $value)
+    {
+        $filters = $this->getRequest()->getSession()->get($this->getSessionName().'.filter', array());
+        $filters[$name] = $value;
+        $this->getRequest()->getSession()->set($this->getSessionName().'.filter', $filters);
     }
     
     /**
