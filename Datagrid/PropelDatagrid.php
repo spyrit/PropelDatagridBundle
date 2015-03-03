@@ -44,7 +44,6 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     
     /**
      * Options that you can use in your Datagrid methods if you need
-     * (Will be deprecated if not used)
      * @var integer 
      */
     protected $options;
@@ -52,8 +51,8 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     public function __construct($container, $options = array())
     {
         $this->container = $container;
-        $this->query = $this->configureQuery();
         $this->options = $options;
+        $this->query = $this->configureQuery();
         $this->buildForm();
     }
     
