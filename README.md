@@ -1,6 +1,8 @@
 PropelDatagridBundle
 ==============
 
+[![Join the chat at https://gitter.im/spyrit/PropelDatagridBundle](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/spyrit/PropelDatagridBundle?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 This bundle helps you to create and manage simple to complex datagrids quickly and easily. 
 
 Unlike other similar bundle already available on github and/or packagist, there is no magic method that will render the datagrid in you view. This technical choice allow you to completely customize your datagrid aspect and render (filter fields, buttons, columns, data displayed in each column, pagination links and informations, etc.)
