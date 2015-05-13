@@ -416,7 +416,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         return $this->container->get('form.factory');
     }
     
-    protected function getQuery()
+    public function getQuery()
     {
         return $this->query;
     }
