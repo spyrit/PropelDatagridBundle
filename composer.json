@@ -24,7 +24,7 @@
         "php": ">=5.3.3",
         "symfony/symfony": ">=2.3",
         "propel/propel-bundle": ">=1.2",
-        "csanquer/colibri-csv": "1.0.*"
+        "csanquer/colibri-csv": "1.2.*"
     },
     "require-dev": {
         "propel/propel-bundle": ">=1.2",
