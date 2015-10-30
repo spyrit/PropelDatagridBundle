@@ -158,6 +158,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     
     protected function sort()
     {
+        $this->removeSort();
         $namespace = $this->getSessionName().'.'.$this->getSortActionParameterName();
         
         $sort = $this->getSession()->get($namespace)? $this->getSession()->get($namespace) : $this->getDefaultSort();
@@ -167,19 +168,34 @@ abstract class PropelDatagrid implements PropelDatagridInterface
             $this->getRequest()->get($this->getDatagridParameterName()) == $this->getName()
         )
         {
-            $sort['column'] = $this->getRequest()->get($this->getSortColumnParameterName());
-            $sort['order'] = $this->getRequest()->get($this->getSortOrderParameterName());
-            
+            $sort[$this->getRequest()->get($this->getSortColumnParameterName())] = $this->getRequest()->get($this->getSortOrderParameterName());
             $this->getSession()->set($namespace, $sort);
         }
-        $method = 'orderBy'.ucfirst($sort['column']);
-        try
+        foreach($sort as $column => $order)
         {
-            $this->getQuery()->$method($sort['order']);
+            $method = 'orderBy'.ucfirst($column);
+            try
+            {
+                $this->getQuery()->$method($order);
+            }
+            catch(\Exception $e)
+            {
+                throw new \Exception('There is no method "'.$method.'" to sort the datagrid on column "'.$sort['column'].'". Just create it in the "'.get_class($this->query).'" object.');
+            }
         }
-        catch(\Exception $e)
+    }
+    
+    public function removeSort()
+    {
+        $namespace = $this->getSessionName().'.'.$this->getSortActionParameterName();
+        if(
+            $this->getRequest()->get($this->getActionParameterName()) == $this->getRemoveSortActionParameterName() &&
+            $this->getRequest()->get($this->getDatagridParameterName()) == $this->getName()
+        )
         {
-            throw new \Exception('There is no method "'.$method.'" to sort the datagrid on column "'.$sort['column'].'". Just create it in the "'.get_class($this->query).'" object.');
+            $sort = $this->getSession()->get($namespace)? $this->getSession()->get($namespace) : $this->getDefaultSort();
+            unset($sort[$this->getRequest()->get($this->getRemoveSortColumnParameterName())]);
+            $this->getSession()->set($namespace, $sort);
         }
     }
     
@@ -191,21 +207,32 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     public function getDefaultSort()
     {
         return array(
-            'column' => $this->getDefaultSortColumn(),
-            'order' => $this->getDefaultSortOrder(),
+            $this->getDefaultSortColumn() => $this->getDefaultSortOrder(),
         );
     }
     
-    public function getSortColumn()
+    public function isSortedColumn($column)
     {
         $sort = $this->getSession()->get($this->getSessionName().'.'.$this->getSortActionParameterName(), $this->getDefaultSort());
-        return $sort['column'];
+        return isset($sort[$column]);
     }
     
-    public function getSortOrder()
+    public function getSortedColumnOrder($column)
     {
         $sort = $this->getSession()->get($this->getSessionName().'.'.$this->getSortActionParameterName(), $this->getDefaultSort());
-        return $sort['order'];
+        return $sort[$column];
+    }
+    
+    public function getSortedColumnPriority($column)
+    {
+        $sort = $this->getSession()->get($this->getSessionName().'.'.$this->getSortActionParameterName(), $this->getDefaultSort());
+        return array_search($column, array_keys($sort));
+    }
+    
+    public function getSortCount()
+    {
+        $sort = $this->getSession()->get($this->getSessionName().'.'.$this->getSortActionParameterName(), $this->getDefaultSort());
+        return count($sort);
     }
     
     public function reset()
@@ -336,6 +363,11 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         return 'sort';
     }
     
+    public function getRemoveSortActionParameterName()
+    {
+        return 'remove-sort';
+    }
+    
     public function getPageActionParameterName()
     {
         return 'page';
@@ -364,6 +396,11 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     public function getSortOrderParameterName()
     {
         return 'param2';
+    }
+    
+    public function getRemoveSortColumnParameterName()
+    {
+        return 'param1';
     }
     
     public function getDefaultSortOrder()
@@ -491,6 +528,24 @@ abstract class PropelDatagrid implements PropelDatagridInterface
             $this->getDatagridParameterName() => $this->getName(),
             $this->getSortColumnParameterName() => $column,
             $this->getSortOrderParameterName() => $order,
+        );
+        return $this->container->get('router')->generate($route, array_merge($params, $extraParams));
+    }
+    
+    /**
+     * Generate remove sort route for a given column to be displayed in view
+     * @todo Remove the order parameter and ask to the datagrid to guess it ?
+     * @param type $route
+     * @param type $column
+     * @param type $extraParams
+     * @return type
+     */
+    public function getRemoveSortPath($route, $column, $extraParams = array())
+    {
+        $params = array(
+            $this->getActionParameterName() => $this->getRemoveSortActionParameterName(),
+            $this->getDatagridParameterName() => $this->getName(),
+            $this->getRemoveSortColumnParameterName() => $column,
         );
         return $this->container->get('router')->generate($route, array_merge($params, $extraParams));
     }
