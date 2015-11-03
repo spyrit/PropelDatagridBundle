@@ -12,6 +12,19 @@ use Propel\Runtime\ActiveQuery\Criteria;
  */
 abstract class PropelDatagrid implements PropelDatagridInterface
 {
+    const ACTION                = 'action';
+    const ACTION_DATAGRID       = 'datagrid';
+    const ACTION_PAGE           = 'page';
+    const ACTION_SORT           = 'sort';
+    const ACTION_REMOVE_SORT    = 'remove-sort';
+    const ACTION_RESET          = 'reset';
+    const ACTION_LIMIT          = 'limit';
+    const ACTION_ADD_COLUMN     = 'add-column';
+    const ACTION_REMOVE_COLUMN  = 'remove-column';
+    
+    const PARAM1 = 'param1';
+    const PARAM2 = 'param2';
+    
     /**
      * The container witch is usefull to get Request parameters and differents 
      * options and parameters.
@@ -71,15 +84,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     {
         $this->preExecute();
         
-        if($this->getRequest()->get($this->getActionParameterName()) == $this->getResetActionParameterName())
-        {
-            $this->reset();
-        }
-        $this->filter();
-        $this->manageColumns();
-        $this->limit();
-        $this->sort();
-        $this->results = $this->getQuery()->paginate($this->getCurrentPage(), $this->getMaxPerPage());
+        $this->controller();
         
         $this->postExecute();
         
@@ -98,13 +103,63 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     
     public function reset()
     {
-        if($this->getRequest()->get($this->getDatagridParameterName()) == $this->getName())
+        return $this
+            ->resetFilters()
+            ->resetSort();
+    }
+    
+    private function controller()
+    {
+        if($this->isRequestedDatagrid())
         {
-            return $this
-                ->resetFilters()
-                ->resetSort();
+            switch($this->getRequestedAction())
+            {
+                case self::ACTION_SORT: $this->updateSort(); break;
+                case self::ACTION_LIMIT:  $this->limit(); break;
+                case self::ACTION_REMOVE_SORT: $this->removeSort(); break;
+                case self::ACTION_RESET: $this->reset(); break;
+                case self::ACTION_ADD_COLUMN: $this->addColumn(); break;
+                case self::ACTION_REMOVE_COLUMN: $this->removeColumn(); break;
+            }
         }
-        return $this;
+        $this->sort();
+        $this->filter();
+        
+        $this->results = $this->getQuery()->paginate(
+            $this->getCurrentPage(), 
+            $this->getMaxPerPage()
+        );
+    }
+    
+    private function isRequestedDatagrid()
+    {
+        return ($this->getRequestedDatagrid() == $this->getName());
+    }
+    
+    private function isRequestedAction($action)
+    {
+        return $this->getRequest()->get(self::ACTION) == $action;
+    }
+    
+    private function getSessionValue($name, $default = null)
+    {
+        return $this->getRequest()
+            ->getSession()
+            ->get($this->getSessionName().'.'.$name, $default);
+    }
+    
+    private function setSessionValue($name, $value)
+    {
+        return $this->getRequest()
+            ->getSession()
+            ->set($this->getSessionName().'.'.$name, $value);
+    }
+    
+    private function removeSessionValue($name)
+    {
+        return $this->getRequest()
+            ->getSession()
+            ->remove($this->getSessionName().'.'.$name);
     }
     
     /*********************************/
@@ -113,13 +168,17 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     
     private function filter()
     {
-        if(in_array($this->getRequest()->getMethod(), array_map('strtoupper', $this->getAllowedFilterMethods())) && $this->getRequest()->get($this->filter->getForm()->getName()))
+        if(in_array(
+                $this->getRequest()->getMethod(), 
+                array_map('strtoupper', $this->getAllowedFilterMethods())
+            ) && $this->getRequest()->get($this->filter->getForm()->getName())
+        )
         {
             $data = $this->getRequest()->get($this->filter->getForm()->getName());
         }
         else
         {
-            $data = $this->getRequest()->getSession()->get($this->getSessionName().'.filter', $this->getDefaultFilters());
+            $data = $this->getSessionValue('filter', $this->getDefaultFilters());
         }
         
         $this->filter->submit($data);
@@ -128,9 +187,12 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         
         if($form->isValid())
         {
-            if(in_array($this->getRequest()->getMethod(), array_map('strtoupper', $this->getAllowedFilterMethods())))
+            if(in_array(
+                $this->getRequest()->getMethod(), 
+                array_map('strtoupper', $this->getAllowedFilterMethods())
+            ))
             {
-                $this->getRequest()->getSession()->set($this->getSessionName().'.filter', $data);
+                $this->setSessionValue('filter', $data);
             }
             $this->applyFilter($formData);
         }
@@ -183,18 +245,22 @@ abstract class PropelDatagrid implements PropelDatagridInterface
             
             foreach($filters as $name => $filter)
             {
-                $this->filter->add($name, $filter['type'], isset($filter['options'])? $filter['options'] : array(), isset($filter['value'])? $filter['value'] : null);
+                $this->filter->add(
+                    $name, 
+                    $filter['type'], 
+                    isset($filter['options'])? $filter['options'] : array(), 
+                    isset($filter['value'])? $filter['value'] : null
+                );
             }
-            
             $this->configureFilterBuilder($this->filter->getBuilder());
         }
     }
     
     public function setFilterValue($name, $value)
     {
-        $filters = $this->getRequest()->getSession()->get($this->getSessionName().'.filter', array());
+        $filters = $this->getSessionValue('filter', array());
         $filters[$name] = $value;
-        $this->getRequest()->getSession()->set($this->getSessionName().'.filter', $filters);
+        $this->setSessionValue('filter', $filters);
     }
     
     public function configureFilter()
@@ -209,7 +275,18 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     
     public function resetFilters()
     {
-        $this->getRequest()->getSession()->remove($this->getSessionName().'.filter');
+        $this->removeSessionValue('filter');
+        return $this;
+    }
+    
+    private function getSessionFilter($default = array())
+    {
+        return $this->getSessionValue('filter', $default);
+    }
+    
+    private function setSessionFilter($value)
+    {
+        $this->setSessionValue('filter', $value);
         return $this;
     }
     
@@ -229,7 +306,8 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     public function configureFilterBuilder($builder)
     {
         /**
-         * Do what you want with the builder. For example, add Event Listener PRE/POST_SET_DATA, etc.
+         * Do what you want with the builder. 
+         * For example, add Event Listener PRE/POST_SET_DATA, etc.
          */
         return;
     }
@@ -245,25 +323,14 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     
     private function sort()
     {
-        $this->removeSort();
-        $namespace = $this->getSessionName().'.'.$this->getSortActionParameterName();
+        $sort = $this->getSessionValue('sort', $this->getDefaultSort());
         
-        $sort = $this->getSession()->get($namespace)? $this->getSession()->get($namespace) : $this->getDefaultSort();
-        
-        if(
-            $this->getRequest()->get($this->getActionParameterName()) == $this->getSortActionParameterName() &&
-            $this->getRequest()->get($this->getDatagridParameterName()) == $this->getName()
-        )
-        {
-            $sort[$this->getRequest()->get($this->getSortColumnParameterName())] = $this->getRequest()->get($this->getSortOrderParameterName());
-            $this->getSession()->set($namespace, $sort);
-        }
         foreach($sort as $column => $order)
         {
             $method = 'orderBy'.ucfirst($column);
             try
             {
-                $this->getQuery()->$method($order);
+                $this->getQuery()->{$method}($order);
             }
             catch(\Exception $e)
             {
@@ -272,18 +339,18 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         }
     }
     
+    public function updateSort()
+    {
+        $sort = $this->getSessionValue('sort', $this->getDefaultSort());
+        $sort[$this->getRequestedSortColumn()] = $this->getRequestedSortOrder();
+        $this->setSessionValue('sort', $sort);
+    }
+    
     public function removeSort()
     {
-        $namespace = $this->getSessionName().'.'.$this->getSortActionParameterName();
-        if(
-            $this->getRequest()->get($this->getActionParameterName()) == $this->getRemoveSortActionParameterName() &&
-            $this->getRequest()->get($this->getDatagridParameterName()) == $this->getName()
-        )
-        {
-            $sort = $this->getSession()->get($namespace)? $this->getSession()->get($namespace) : $this->getDefaultSort();
-            unset($sort[$this->getRequest()->get($this->getRemoveSortColumnParameterName())]);
-            $this->getSession()->set($namespace, $sort);
-        }
+        $sort = $this->getSessionValue('sort', $this->getDefaultSort());
+        unset($sort[$this->getRequestedSortedColumnRemoval()]);
+        $this->setSessionValue('sort', $sort);
     }
     
     public function getDefaultSort()
@@ -295,31 +362,31 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     
     public function isSortedColumn($column)
     {
-        $sort = $this->getSession()->get($this->getSessionName().'.'.$this->getSortActionParameterName(), $this->getDefaultSort());
+        $sort = $this->getSessionValue('sort', $this->getDefaultSort());
         return isset($sort[$column]);
     }
     
     public function getSortedColumnOrder($column)
     {
-        $sort = $this->getSession()->get($this->getSessionName().'.'.$this->getSortActionParameterName(), $this->getDefaultSort());
+        $sort = $this->getSessionValue('sort', $this->getDefaultSort());
         return $sort[$column];
     }
     
     public function getSortedColumnPriority($column)
     {
-        $sort = $this->getSession()->get($this->getSessionName().'.'.$this->getSortActionParameterName(), $this->getDefaultSort());
+        $sort = $this->getSessionValue('sort', $this->getDefaultSort());
         return array_search($column, array_keys($sort));
     }
     
     public function getSortCount()
     {
-        $sort = $this->getSession()->get($this->getSessionName().'.'.$this->getSortActionParameterName(), $this->getDefaultSort());
+        $sort = $this->getSessionValue('sort', $this->getDefaultSort());
         return count($sort);
     }
     
     public function resetSort()
     {
-        $this->getRequest()->getSession()->remove($this->getSessionName().'.'.$this->getSortActionParameterName());
+        $this->removeSessionValue('sort');
         return $this;
     }
     
@@ -369,16 +436,15 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     
     public function getCurrentPage($default = 1)
     {
-        $name = $this->getSessionName().'.'.$this->getPageParameterName();
-        if($this->getRequest()->get($this->getDatagridParameterName()) == $this->getName())
+        if($this->isRequestedDatagrid())
         {
-            $page = $this->getRequest()->get($this->getPageParameterName());
+            $page = $this->getRequestedPage();
         }
         if(!isset($page))
         {
-            $page = $this->getRequest()->getSession()->get($name, $default);
+            $page = $this->getSessionValue('page', $default);
         }
-        $this->getRequest()->getSession()->set($name, $page);
+        $this->setSessionValue('page', $page);
         
         return $page;
     }
@@ -387,71 +453,44 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     /* Dynamic columns feature here **/
     /*********************************/
     
-    private function manageColumns()
-    {
-        if(count($this->getDefaultColumns()) > 0)
-        {
-            $this->removeColumn();
-            $this->addColumn();
-        }
-    }
-    
     private function removeColumn()
     {
-        if(
-            $this->getRequest()->get($this->getActionParameterName()) == $this->getRemoveColumnActionParameterName() &&
-            $this->getRequest()->get($this->getDatagridParameterName()) == $this->getName()
-        )
+        $columnToRemove = $this->getRequestedColumnRemoval();
+        $columns = $this->getColumns();
+
+        if(array_key_exists($columnToRemove, $columns))
         {
-            $namespace = $this->getSessionName().'.columns';
-            $columnToRemove = $this->getRequest()->get($this->getRemoveColumnParameterName());
-            
-            $columns = $this->getColumns();
-                    
-            if(array_key_exists($columnToRemove, $columns))
-            {
-                unset($columns[$columnToRemove]);
-                $this->getRequest()->getSession()->set($namespace, $columns);
-                
-                /**
-                 * @todo Remove sort on the removed column
-                 * The problem is the column name is not the same as the sort name...
-                 */
-                /*$sortNamespace = $this->getSessionName().'.'.$this->getSortActionParameterName();
-                $sort = $this->getSession()->get($sortNamespace)? $this->getSession()->get($sortNamespace) : $this->getDefaultSort();
-                unset($sort[$columnToRemove]);
-                $this->getSession()->set($namespace, $sort);*/
-            }
+            unset($columns[$columnToRemove]);
+            $this->setSessionValue('columns', $columns);
+            /**
+             * @todo Remove sort on the removed column
+             */
         }
     }
     
     private function addColumn()
     {
-        if(
-            $this->getRequest()->get($this->getActionParameterName()) == $this->getNewColumnActionParameterName() &&
-            $this->getRequest()->get($this->getDatagridParameterName()) == $this->getName()
-        )
+        $newColumn = $this->getRequestedNewColumn();
+        $precedingColumn = $this->getRequestedPrecedingNewColumn();
+
+        if(array_key_exists($newColumn, $this->getAvailableAppendableColumns()))
         {
-            $namespace = $this->getSessionName().'.columns';
-            $newColumn = $this->getRequest()->get($this->getNewColumnParameterName());
-            $precedingColumn = $this->getRequest()->get($this->getPrecedingNewColumnParameterName());
-            
-            if(array_key_exists($newColumn, $this->getAvailableAppendableColumns()))
+            $columns = $this->getColumns();
+            $newColumnsArray = array();
+
+            foreach($columns as $column => $label)
             {
-                $columns = $this->getColumns();
-                $newColumnsArray = array();
-                foreach($columns as $column => $label)
+                $newColumnsArray[$column] = $label;
+                if($column == $precedingColumn)
                 {
-                    $newColumnsArray[$column] = $label;
-                    if($column == $precedingColumn)
-                    {
-                        $cols = array_merge($this->getAppendableColumns(), $this->getDefaultColumns());
-                        $newColumnsArray[$newColumn] = $cols[$newColumn];
-                    }
+                    $cols = array_merge(
+                        $this->getAppendableColumns(), 
+                        $this->getDefaultColumns()
+                    );
+                    $newColumnsArray[$newColumn] = $cols[$newColumn];
                 }
-                
-                $this->getRequest()->getSession()->set($namespace, $newColumnsArray);
             }
+            $this->setSessionValue('columns', $newColumnsArray);
         }
     }
     
@@ -472,16 +511,17 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     
     public function getAvailableAppendableColumns()
     {
-        $namespace = $this->getSessionName().'.columns';
-        $columns = $this->getSession()->get($namespace, $this->getDefaultColumns());
+        $columns = $this->getSessionValue('columns', $this->getDefaultColumns());
         
-        return array_merge(array_diff_key($this->getAppendableColumns(), $columns), array_diff_key($this->getDefaultColumns(), $columns));
+        return array_merge(
+            array_diff_key($this->getAppendableColumns(), $columns), 
+            array_diff_key($this->getDefaultColumns(), $columns)
+        );
     }
     
     public function getColumns()
     {
-        $namespace = $this->getSessionName().'.columns';
-        return $this->getSession()->get($namespace, $this->getDefaultColumns());
+        return $this->getSessionValue('columns', $this->getDefaultColumns());
     }
     
     /*********************************/
@@ -490,18 +530,11 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     
     private function limit()
     {
-        if(
-            $this->getRequest()->get($this->getActionParameterName()) == $this->getLimitActionParameterName() &&
-            $this->getRequest()->get($this->getDatagridParameterName()) == $this->getName()
-        )
+        $limit = $this->getRequestedLimit();
+
+        if(in_array($limit, $this->getAvailableMaxPerPage()))
         {
-            $namespace = $this->getSessionName().'.'.$this->getLimitActionParameterName();
-            $limit = $this->getRequest()->get($this->getLimitParameterName());
-            
-            if(in_array($limit, $this->getAvailableMaxPerPage()))
-            {
-                $this->getSession()->set($namespace, $limit);
-            }
+            $this->setSessionValue('limit', $limit);
         }
     }
     
@@ -517,12 +550,12 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     
     public function getMaxPerPage()
     {
-        return $this->getSession()->get($this->getSessionName().'.'.$this->getLimitActionParameterName(), $this->getDefaultMaxPerPage());
+        return $this->getSessionValue('limit', $this->getDefaultMaxPerPage());
     }
     
-    public function setMaxPerPage($v)
+    public function setMaxPerPage($value)
     {
-        $this->getSession()->set($this->getSessionName().'.'.$this->getLimitActionParameterName(), $v);
+        $this->setSessionValue('limit', $value);
         return $this;
     }
     
@@ -530,89 +563,54 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     /* Routing helper methods here ***/
     /*********************************/
     
-    public function getActionParameterName()
+    protected function getRequestedAction($default = null)
     {
-        return 'action';
+        return $this->getRequest()->get(self::ACTION, $default);
     }
     
-    public function getSortActionParameterName()
+    protected function getRequestedDatagrid($default = null)
     {
-        return 'sort';
+        return $this->getRequest()->get(self::ACTION_DATAGRID, $default);
+    }
+            
+    protected function getRequestedSortColumn($default = null)
+    {
+        return $this->getRequest()->get(self::PARAM1, $default);
     }
     
-    public function getRemoveSortActionParameterName()
+    protected function getRequestedSortOrder($default = null)
     {
-        return 'remove-sort';
+        return $this->getRequest()->get(self::PARAM2, $default);
     }
     
-    public function getPageActionParameterName()
+    protected function getRequestedSortedColumnRemoval($default = null)
     {
-        return 'page';
+        return $this->getRequest()->get(self::PARAM1, $default);
     }
     
-    public function getDatagridParameterName()
+    protected function getRequestedPage($default = null)
     {
-        return 'datagrid';
+        return $this->getRequest()->get(self::PARAM1, $default);
     }
     
-    public function getPageParameterName()
+    protected function getRequestedNewColumn($default = null)
     {
-        return 'param1';
+        return $this->getRequest()->get(self::PARAM1, $default);
     }
     
-    public function getResetActionParameterName()
+    protected function getRequestedPrecedingNewColumn($default = null)
     {
-        return 'reset';
+        return $this->getRequest()->get(self::PARAM2, $default);
     }
     
-    public function getSortColumnParameterName()
+    protected function getRequestedColumnRemoval($default = null)
     {
-        return 'param1';
+        return $this->getRequest()->get(self::PARAM1, $default);
     }
     
-    public function getSortOrderParameterName()
+    protected function getRequestedLimit($default = null)
     {
-        return 'param2';
-    }
-    
-    public function getRemoveSortColumnParameterName()
-    {
-        return 'param1';
-    }
-    
-    public function getNewColumnActionParameterName()
-    {
-        return 'add-column';
-    }
-    
-    public function getNewColumnParameterName()
-    {
-        return 'param1';
-    }
-    
-    public function getPrecedingNewColumnParameterName()
-    {
-        return 'param2';
-    }
-    
-    public function getRemoveColumnActionParameterName()
-    {
-        return 'remove-column';
-    }
-    
-    public function getRemoveColumnParameterName()
-    {
-        return 'param1';
-    }
-    
-    public function getLimitActionParameterName()
-    {
-        return 'limit';
-    }
-    
-    public function getLimitParameterName()
-    {
-        return 'param1';
+        return $this->getRequest()->get(self::PARAM1, $default);
     }
     
     /*********************************/
@@ -676,11 +674,12 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     public function getPaginationPath($route, $page, $extraParams = array())
     {
         $params = array(
-            $this->getActionParameterName() => $this->getPageActionParameterName(),
-            $this->getDatagridParameterName() => $this->getName(),
-            $this->getPageParameterName() => $page,
+            self::ACTION => self::ACTION_PAGE,
+            self::ACTION_DATAGRID => $this->getName(),
+            self::PARAM1 => $page,
         );
-        return $this->container->get('router')->generate($route, array_merge($params, $extraParams));
+        return $this->container->get('router')
+            ->generate($route, array_merge($params, $extraParams));
     }
     
     /**
@@ -692,10 +691,11 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     public function getResetPath($route, $extraParams = array())
     {
         $params = array(
-            $this->getActionParameterName() => $this->getResetActionParameterName(),
-            $this->getDatagridParameterName() => $this->getName(),
+            self::ACTION => self::ACTION_RESET,
+            self::ACTION_DATAGRID => $this->getName(),
         );
-        return $this->container->get('router')->generate($route, array_merge($params, $extraParams));
+        return $this->container->get('router')
+            ->generate($route, array_merge($params, $extraParams));
     }
     
     /**
@@ -710,12 +710,13 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     public function getSortPath($route, $column, $order, $extraParams = array())
     {
         $params = array(
-            $this->getActionParameterName() => $this->getSortActionParameterName(),
-            $this->getDatagridParameterName() => $this->getName(),
-            $this->getSortColumnParameterName() => $column,
-            $this->getSortOrderParameterName() => $order,
+            self::ACTION => self::ACTION_SORT,
+            self::ACTION_DATAGRID => $this->getName(),
+            self::PARAM1 => $column,
+            self::PARAM2 => $order,
         );
-        return $this->container->get('router')->generate($route, array_merge($params, $extraParams));
+        return $this->container->get('router')
+            ->generate($route, array_merge($params, $extraParams));
     }
     
     /**
@@ -728,11 +729,12 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     public function getRemoveSortPath($route, $column, $extraParams = array())
     {
         $params = array(
-            $this->getActionParameterName() => $this->getRemoveSortActionParameterName(),
-            $this->getDatagridParameterName() => $this->getName(),
-            $this->getRemoveSortColumnParameterName() => $column,
+            self::ACTION => self::ACTION_REMOVE_SORT,
+            self::ACTION_DATAGRID => $this->getName(),
+            self::PARAM1 => $column,
         );
-        return $this->container->get('router')->generate($route, array_merge($params, $extraParams));
+        return $this->container->get('router')
+            ->generate($route, array_merge($params, $extraParams));
     }
     
     /**
@@ -746,12 +748,13 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     public function getNewColumnPath($route, $newColumn, $precedingColumn, $extraParams = array())
     {
         $params = array(
-            $this->getActionParameterName() => $this->getNewColumnActionParameterName(),
-            $this->getDatagridParameterName() => $this->getName(),
-            $this->getNewColumnParameterName() => $newColumn,
-            $this->getPrecedingNewColumnParameterName() => $precedingColumn,
+            self::ACTION => self::ACTION_ADD_COLUMN,
+            self::ACTION_DATAGRID => $this->getName(),
+            self::PARAM1 => $newColumn,
+            self::PARAM2 => $precedingColumn,
         );
-        return $this->container->get('router')->generate($route, array_merge($params, $extraParams));
+        return $this->container->get('router')
+            ->generate($route, array_merge($params, $extraParams));
     }
     
     /**
@@ -765,11 +768,12 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     public function getRemoveColumnPath($route, $column, $extraParams = array())
     {
         $params = array(
-            $this->getActionParameterName() => $this->getRemoveColumnActionParameterName(),
-            $this->getDatagridParameterName() => $this->getName(),
-            $this->getRemoveColumnParameterName() => $column,
+            self::ACTION => self::ACTION_REMOVE_COLUMN,
+            self::ACTION_DATAGRID => $this->getName(),
+            self::PARAM1 => $column,
         );
-        return $this->container->get('router')->generate($route, array_merge($params, $extraParams));
+        return $this->container->get('router')
+            ->generate($route, array_merge($params, $extraParams));
     }
     
     /**
@@ -783,10 +787,11 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     public function getMaxPerPagePath($route, $limit, $extraParams = array())
     {
         $params = array(
-            $this->getActionParameterName() => $this->getLimitActionParameterName(),
-            $this->getDatagridParameterName() => $this->getName(),
-            $this->getLimitParameterName() => $limit,
+            self::ACTION => self::ACTION_LIMIT,
+            self::ACTION_DATAGRID => $this->getName(),
+            self::PARAM1 => $limit,
         );
-        return $this->container->get('router')->generate($route, array_merge($params, $extraParams));
+        return $this->container->get('router')
+            ->generate($route, array_merge($params, $extraParams));
     }
 }
