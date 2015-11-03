@@ -77,6 +77,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         }
         $this->filter();
         $this->manageColumns();
+        $this->limit();
         $this->sort();
         $this->results = $this->getQuery()->paginate($this->getCurrentPage(), $this->getMaxPerPage());
         
@@ -361,23 +362,9 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         return array();
     }
     
-    public function getMaxPerPage()
-    {
-        if($this->maxPerPage)
-        {
-            return $this->maxPerPage;
-        }
-        return 30;
-    }
-    
     public function getSessionName()
     {
         return 'datagrid.'.$this->getName();
-    }
-    
-    public function setMaxPerPage($v)
-    {
-        $this->maxPerPage = $v;
     }
     
     public function getCurrentPage($default = 1)
@@ -397,7 +384,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     }
     
     /*********************************/
-    /* Dynamic columns ***************/
+    /* Dynamic columns feature here **/
     /*********************************/
     
     private function manageColumns()
@@ -498,6 +485,48 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     }
     
     /*********************************/
+    /* Max per page feature here *****/
+    /*********************************/
+    
+    private function limit()
+    {
+        if(
+            $this->getRequest()->get($this->getActionParameterName()) == $this->getLimitActionParameterName() &&
+            $this->getRequest()->get($this->getDatagridParameterName()) == $this->getName()
+        )
+        {
+            $namespace = $this->getSessionName().'.'.$this->getLimitActionParameterName();
+            $limit = $this->getRequest()->get($this->getLimitParameterName());
+            
+            if(in_array($limit, $this->getAvailableMaxPerPage()))
+            {
+                $this->getSession()->set($namespace, $limit);
+            }
+        }
+    }
+    
+    public function getAvailableMaxPerPage()
+    {
+        return array(15, 30, 50);
+    }
+    
+    public function getDefaultMaxPerPage()
+    {
+        return 30;
+    }
+    
+    public function getMaxPerPage()
+    {
+        return $this->getSession()->get($this->getSessionName().'.'.$this->getLimitActionParameterName(), $this->getDefaultMaxPerPage());
+    }
+    
+    public function setMaxPerPage($v)
+    {
+        $this->getSession()->set($this->getSessionName().'.'.$this->getLimitActionParameterName(), $v);
+        return $this;
+    }
+    
+    /*********************************/
     /* Routing helper methods here ***/
     /*********************************/
     
@@ -572,6 +601,16 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     }
     
     public function getRemoveColumnParameterName()
+    {
+        return 'param1';
+    }
+    
+    public function getLimitActionParameterName()
+    {
+        return 'limit';
+    }
+    
+    public function getLimitParameterName()
     {
         return 'param1';
     }
@@ -681,7 +720,6 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     
     /**
      * Generate remove sort route for a given column to be displayed in view
-     * @todo Remove the order parameter and ask to the datagrid to guess it ?
      * @param type $route
      * @param type $column
      * @param type $extraParams
@@ -699,7 +737,6 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     
     /**
      * Generate new column route for a given column to be displayed in view
-     * @todo Remove the order parameter and ask to the datagrid to guess it ?
      * @param type $route
      * @param type $column
      * @param type $precedingColumn
@@ -719,7 +756,6 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     
     /**
      * Generate remove column route for a given column to be displayed in view
-     * @todo Remove the order parameter and ask to the datagrid to guess it ?
      * @param type $route
      * @param type $column
      * @param type $precedingColumn
@@ -732,6 +768,24 @@ abstract class PropelDatagrid implements PropelDatagridInterface
             $this->getActionParameterName() => $this->getRemoveColumnActionParameterName(),
             $this->getDatagridParameterName() => $this->getName(),
             $this->getRemoveColumnParameterName() => $column,
+        );
+        return $this->container->get('router')->generate($route, array_merge($params, $extraParams));
+    }
+    
+    /**
+     * Generate max per page route to be displayed in view
+     * @param type $route
+     * @param type $column
+     * @param type $precedingColumn
+     * @param type $extraParams
+     * @return type
+     */
+    public function getMaxPerPagePath($route, $limit, $extraParams = array())
+    {
+        $params = array(
+            $this->getActionParameterName() => $this->getLimitActionParameterName(),
+            $this->getDatagridParameterName() => $this->getName(),
+            $this->getLimitParameterName() => $limit,
         );
         return $this->container->get('router')->generate($route, array_merge($params, $extraParams));
     }
