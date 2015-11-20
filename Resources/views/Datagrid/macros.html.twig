@@ -1,20 +1,55 @@
-{% macro sort(column, label, route, datagrid) %}
-    {% if datagrid.sortColumn == column %}
-        {% if datagrid.sortOrder == 'desc' %} 
+{% macro sort(column, label, route, datagrid, extraParams = {}) %}
+    {% if datagrid.isSortedColumn(column) %}
+        {% if datagrid.sortedColumnOrder(column) == 'desc' %} 
             {% set order = 'asc' %}
-            {% set icon = 'fa-chevron-down' %}
+            {% set icon = 'fa-sort-desc' %}
         {% else %}
             {% set order = 'desc' %}
-            {% set icon = 'fa-chevron-up' %}
+            {% set icon = 'fa-sort-asc' %}
         {%endif %}
     {% else %}
-        {% set order = datagrid.defaultSort.order %}
+        {% set order = datagrid.defaultSortOrder %}
     {% endif %}
     
-    <a href="{{ datagrid.sortPath(route, column, order) }}">
+    <a href="{{ datagrid.sortPath(route, column, order, extraParams) }}">
         {{ label }} 
     </a> 
-    {% if datagrid.sortColumn == column %}
-    <i class="fa {{ icon }}"></i>
+    
+    <span class="sort-icon">
+        <i class="fa fa-sort default-sort"></i>
+        {% if datagrid.isSortedColumn(column) %}
+            <i class="fa {{ icon }} active-sort"></i>
+        {% endif %}
+    </span>
+    
+    {% if datagrid.sortCount > 1 and datagrid.isSortedColumn(column) %}
+    <sup class="label label-success sort-label">
+        {{ datagrid.sortedColumnPriority(column) + 1 }}
+        <a href="{{ datagrid.removeSortPath(route, column, extraParams) }}">
+            <i class="fa fa-times remove-sort"></i>
+        </a>
+    </sup>
     {% endif %}
+{% endmacro %}
+
+{% macro columnActions(column, route, datagrid, extraParams = {}) %}
+    <div class="column-actions">
+        <i class="fa fa-plus-circle add-column" data-toggle="popover" data-placement="bottom" data-html="true" data-trigger="click" data-content="{% spaceless %}
+        {% if datagrid.availableAppendableColumns|length > 0 %}
+        {{ '<div class="pagination-limit">
+            <div class="btn-group btn-group-xs m-b-sm">
+                <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    ' ~ ('Insert a column'|trans) ~ ' <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">'|escape('html') }}
+                    {% for newColumn, newColumnLabel in datagrid.availableAppendableColumns %}
+                    {{ '<li><a href="' ~ datagrid.newColumnPath(route, newColumn, column, extraParams) ~ '" class="text-sm">' ~ newColumnLabel ~ '</a></li>' }}
+                    {% endfor %}
+                {{ '</ul>
+            </div>
+        </div>'|escape('html') }}
+        {% endif %}
+        {{ ('<a class="btn btn-danger btn-xs text-sm btn-block" href="' ~ datagrid.removeColumnPath(route, column, extraParams) ~ '"><i class="fa fa-times"></i> Supprimer la colonne</a>')|escape('html') }}
+        {% endspaceless %}"></i>
+    </div>
 {% endmacro %}

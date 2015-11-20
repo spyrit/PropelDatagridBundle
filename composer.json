@@ -27,17 +27,7 @@
         "csanquer/colibri-csv": "1.2.*"
     },
     "require-dev": {
-        "propel/propel-bundle": ">=1.2",
-        "doctrine/orm": "~2.2,>=2.2.3",
-        "doctrine/doctrine-bundle": "~1.2",
-        "symfony/monolog-bundle": "~2.4",
-        "sensio/distribution-bundle": "~3.0",
-        "sensio/framework-extra-bundle": "~3.0",
-        "symfony/swiftmailer-bundle": "~2.3",
-        "twig/extensions": "~1.0",
-        "symfony/assetic-bundle": "~2.3",
-        "phpunit/phpunit": "4.2.*",
-        "sensio/generator-bundle": "~2.3"
+        "phpunit/phpunit": "4.2.*"
     },
     "autoload": {
         "psr-0": { "Spyrit\\PropelDatagridBundle": "" }

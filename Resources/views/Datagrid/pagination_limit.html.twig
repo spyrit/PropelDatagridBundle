@@ -1,0 +1,14 @@
+<div class="pagination-limit">
+    <div class="btn-group btn-group-xs">
+        <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            {{ "Afficher " ~ datagrid.maxPerPage ~ " résultats par page" }} <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            {% for limit in datagrid.availableMaxPerPage %}
+            <li>
+                <a href="{{ datagrid.maxPerPagePath(route, limit) }}" class="text-sm">{{ limit ~ " résultats par page" }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>

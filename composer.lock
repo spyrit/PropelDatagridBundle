@@ -543,7 +543,14 @@
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.2.0"
+                "php": ">=5.4",
+                "psr/log": "~1.0",
+                "symfony/config": "~2.3",
+                "symfony/console": "~2.3",
+                "symfony/filesystem": "~2.3",
+                "symfony/finder": "~2.3",
+                "symfony/validator": "~2.3",
+                "symfony/yaml": "~2.3"
             },
             "require-dev": {
                 "ext-pdo_sqlite": "*",
@@ -565,20 +572,10 @@
                 "squizlabs/php_codesniffer": "~2.2"
             },
             "suggest": {
-                "pdepend/pdepend": "PHP version of JDepend",
-                "pear/archive_tar": "Tar file management class",
-                "pear/versioncontrol_git": "A library that provides OO interface to handle Git repository",
-                "pear/versioncontrol_svn": "A simple OO-style interface for Subversion, the free/open-source version control system",
-                "phpdocumentor/phpdocumentor": "Documentation Generator for PHP",
-                "phploc/phploc": "A tool for quickly measuring the size of a PHP project",
-                "phpmd/phpmd": "PHP version of PMD tool",
-                "phpunit/php-code-coverage": "Library that provides collection, processing, and rendering functionality for PHP code coverage information",
-                "phpunit/phpunit": "The PHP Unit Testing Framework",
-                "sebastian/phpcpd": "Copy/Paste Detector (CPD) for PHP code",
-                "tedivm/jshrink": "Javascript Minifier built in PHP"
+                "monolog/monolog": "The recommended logging library to use with Propel."
             },
             "bin": [
-                "bin/phing"
+                "bin/propel"
             ],
             "type": "library",
             "extra": {
@@ -587,16 +584,13 @@
                 }
             },
             "autoload": {
-                "classmap": [
-                    "classes/phing/"
-                ]
+                "psr-0": {
+                    "Propel": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
-            "include-path": [
-                "classes"
-            ],
             "license": [
-                "LGPL-3.0"
+                "MIT"
             ],
             "authors": [
                 {
@@ -611,10 +605,9 @@
             "description": "PHing Is Not GNU make; it's a PHP project build system or build tool based on Apache Ant.",
             "homepage": "https://www.phing.info/",
             "keywords": [
-                "build",
-                "phing",
-                "task",
-                "tool"
+                "Active Record",
+                "orm",
+                "persistence"
             ],
             "time": "2015-05-20 13:04:38"
         },
@@ -639,13 +632,14 @@
                 "symfony/symfony": "~2.4"
             },
             "require-dev": {
-                "fzaninotto/faker": "dev-master",
+                "fzaninotto/faker": "~1.1",
+                "phpunit/phpunit": "~4.0",
                 "sensio/framework-extra-bundle": "~3.0"
             },
             "type": "symfony-bundle",
             "autoload": {
-                "psr-0": {
-                    "Propel\\PropelBundle": ""
+                "psr-4": {
+                    "Propel\\PropelBundle\\": ""
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1039,8 +1033,8 @@
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "Doctrine\\DBAL\\": "lib/"
+                "psr-4": {
+                    "Doctrine\\Instantiator\\": "src/Doctrine/Instantiator/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1871,12 +1865,11 @@
                     "role": "lead"
                 }
             ],
-            "description": "The PHP Unit Testing framework.",
-            "homepage": "http://www.phpunit.de/",
+            "description": "A small, lightweight utility to instantiate objects in PHP without invoking their constructors",
+            "homepage": "https://github.com/doctrine/instantiator",
             "keywords": [
-                "phpunit",
-                "testing",
-                "xunit"
+                "constructor",
+                "instantiate"
             ],
             "time": "2014-09-14 09:31:24"
         },
@@ -1904,7 +1897,9 @@
                 "phpunit/phpunit": "~4.4"
             },
             "suggest": {
-                "ext-soap": "*"
+                "ext-dom": "*",
+                "ext-xdebug": ">=2.2.1",
+                "ext-xmlwriter": "*"
             },
             "type": "library",
             "extra": {
@@ -1928,10 +1923,11 @@
                     "role": "lead"
                 }
             ],
-            "description": "Mock Object library for PHPUnit",
-            "homepage": "https://github.com/sebastianbergmann/phpunit-mock-objects/",
+            "description": "Library that provides collection, processing, and rendering functionality for PHP code coverage information.",
+            "homepage": "https://github.com/sebastianbergmann/php-code-coverage",
             "keywords": [
-                "mock",
+                "coverage",
+                "testing",
                 "xunit"
             ],
             "time": "2015-07-10 06:54:24"
@@ -1966,10 +1962,13 @@
             },
             "autoload": {
                 "classmap": [
-                    "src/"
+                    "File/"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
+            "include-path": [
+                ""
+            ],
             "license": [
                 "BSD-3-Clause"
             ],
@@ -1991,12 +1990,11 @@
                     "email": "sebastian@phpunit.de"
                 }
             ],
-            "description": "Provides the functionality to compare PHP values for equality",
-            "homepage": "http://www.github.com/sebastianbergmann/comparator",
+            "description": "FilterIterator implementation that filters files based on a list of suffixes.",
+            "homepage": "https://github.com/sebastianbergmann/php-file-iterator/",
             "keywords": [
-                "comparator",
-                "compare",
-                "equality"
+                "filesystem",
+                "iterator"
             ],
             "time": "2015-07-26 15:48:44"
         },
@@ -2045,10 +2043,10 @@
                     "email": "sebastian@phpunit.de"
                 }
             ],
-            "description": "Diff implementation",
-            "homepage": "http://www.github.com/sebastianbergmann/diff",
+            "description": "Simple template engine.",
+            "homepage": "https://github.com/sebastianbergmann/php-text-template/",
             "keywords": [
-                "diff"
+                "template"
             ],
             "time": "2015-02-22 15:13:53"
         },
@@ -2093,12 +2091,10 @@
                     "email": "sebastian@phpunit.de"
                 }
             ],
-            "description": "Provides functionality to handle HHVM/PHP environments",
-            "homepage": "http://www.github.com/sebastianbergmann/environment",
+            "description": "Utility class for timing",
+            "homepage": "https://github.com/sebastianbergmann/php-timer/",
             "keywords": [
-                "Xdebug",
-                "environment",
-                "hhvm"
+                "timer"
             ],
             "time": "2015-08-03 06:14:51"
         },
@@ -2235,7 +2231,6 @@
                 "reference": "58b3a85e7999757d6ad81c787a1fbf5ff6c628c6",
                 "shasum": ""
             },
-            "type": "library",
             "autoload": {
                 "classmap": [
                     "src/"
@@ -2309,10 +2304,10 @@
                     "email": "fabien@symfony.com"
                 }
             ],
-            "description": "Base bundle for Symfony Distributions",
+            "description": "Wrapper around PHP's tokenizer extension.",
+            "homepage": "https://github.com/sebastianbergmann/php-token-stream/",
             "keywords": [
-                "configuration",
-                "distribution"
+                "tokenizer"
             ],
             "time": "2015-08-03 10:07:12"
         },
@@ -2331,22 +2326,36 @@
                 "shasum": ""
             },
             "require": {
-                "doctrine/common": "~2.2",
-                "symfony/framework-bundle": "~2.3"
-            },
-            "require-dev": {
-                "symfony/expression-language": "~2.4",
-                "symfony/security-bundle": "~2.4"
+                "ext-dom": "*",
+                "ext-json": "*",
+                "ext-pcre": "*",
+                "ext-reflection": "*",
+                "ext-spl": "*",
+                "php": ">=5.3.3",
+                "phpunit/php-code-coverage": "~2.0",
+                "phpunit/php-file-iterator": "~1.3.1",
+                "phpunit/php-text-template": "~1.2",
+                "phpunit/php-timer": "~1.0.2",
+                "phpunit/phpunit-mock-objects": "~2.2",
+                "sebastian/comparator": "~1.0",
+                "sebastian/diff": "~1.1",
+                "sebastian/environment": "~1.0",
+                "sebastian/exporter": "~1.0",
+                "sebastian/version": "~1.0",
+                "symfony/yaml": "~2.0"
             },
             "suggest": {
                 "symfony/expression-language": "",
                 "symfony/psr-http-message-bridge": "To use the PSR-7 converters",
                 "symfony/security-bundle": ""
             },
-            "type": "symfony-bundle",
+            "bin": [
+                "phpunit"
+            ],
+            "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0.x-dev"
+                    "dev-master": "4.2.x-dev"
                 }
             },
             "autoload": {
@@ -2355,19 +2364,26 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
+            "include-path": [
+                "",
+                "../../symfony/yaml/"
+            ],
             "license": [
-                "MIT"
+                "BSD-3-Clause"
             ],
             "authors": [
                 {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
+                    "name": "Sebastian Bergmann",
+                    "email": "sebastian@phpunit.de",
+                    "role": "lead"
                 }
             ],
-            "description": "This bundle provides a way to configure your controllers with annotations",
+            "description": "The PHP Unit Testing framework.",
+            "homepage": "http://www.phpunit.de/",
             "keywords": [
-                "annotations",
-                "controllers"
+                "phpunit",
+                "testing",
+                "xunit"
             ],
             "time": "2015-08-03 11:59:27"
         },
@@ -2391,24 +2407,25 @@
                 "symfony/framework-bundle": "~2.2"
             },
             "require-dev": {
-                "doctrine/orm": "~2.2,>=2.2.3",
-                "symfony/doctrine-bridge": "~2.2",
-                "twig/twig": "~1.11"
+                "phpunit/phpunit": "~4.4"
             },
-            "type": "symfony-bundle",
+            "suggest": {
+                "ext-soap": "*"
+            },
+            "type": "library",
             "extra": {
                 "branch-alias": {
                     "dev-master": "2.5.x-dev"
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "Sensio\\Bundle\\GeneratorBundle": ""
-                }
+                "classmap": [
+                    "src/"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "MIT"
+                "BSD-3-Clause"
             ],
             "authors": [
                 {
@@ -2436,9 +2453,6 @@
             "require": {
                 "symfony/console": "~2.0"
             },
-            "bin": [
-                "security-checker"
-            ],
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -2446,18 +2460,30 @@
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "SensioLabs\\Security": ""
-                }
+                "classmap": [
+                    "src/"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "MIT"
+                "BSD-3-Clause"
             ],
             "authors": [
                 {
-                    "name": "Fabien Potencier",
-                    "email": "fabien.potencier@gmail.com"
+                    "name": "Jeff Welch",
+                    "email": "whatthejeff@gmail.com"
+                },
+                {
+                    "name": "Volker Dusch",
+                    "email": "github@wallbash.com"
+                },
+                {
+                    "name": "Bernhard Schussek",
+                    "email": "bschussek@2bepublished.at"
+                },
+                {
+                    "name": "Sebastian Bergmann",
+                    "email": "sebastian@phpunit.de"
                 }
             ],
             "description": "A security checker for your composer.lock",
@@ -2490,13 +2516,13 @@
                 }
             },
             "autoload": {
-                "files": [
-                    "lib/swift_required.php"
+                "classmap": [
+                    "src/"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "MIT"
+                "BSD-3-Clause"
             ],
             "authors": [
                 {
@@ -2507,8 +2533,8 @@
                     "email": "fabien@symfony.com"
                 }
             ],
-            "description": "Swiftmailer, free feature-rich PHP mailer",
-            "homepage": "http://swiftmailer.org",
+            "description": "Diff implementation",
+            "homepage": "http://www.github.com/sebastianbergmann/diff",
             "keywords": [
                 "email",
                 "mail",
@@ -2550,7 +2576,7 @@
                 "kriswallsmith/spork": "to be able to dump assets in parallel",
                 "symfony/twig-bundle": "to use the Twig integration"
             },
-            "type": "symfony-bundle",
+            "type": "library",
             "extra": {
                 "branch-alias": {
                     "dev-master": "2.5-dev"
@@ -2563,21 +2589,20 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "MIT"
+                "BSD-3-Clause"
             ],
             "authors": [
                 {
-                    "name": "Kris Wallsmith",
-                    "email": "kris.wallsmith@gmail.com",
-                    "homepage": "http://kriswallsmith.net/"
+                    "name": "Sebastian Bergmann",
+                    "email": "sebastian@phpunit.de"
                 }
             ],
-            "description": "Integrates Assetic into Symfony2",
-            "homepage": "https://github.com/symfony/AsseticBundle",
+            "description": "Provides functionality to handle HHVM/PHP environments",
+            "homepage": "http://www.github.com/sebastianbergmann/environment",
             "keywords": [
-                "assets",
-                "compression",
-                "minification"
+                "Xdebug",
+                "environment",
+                "hhvm"
             ],
             "time": "2015-01-27 12:45:16"
         },
@@ -2596,47 +2621,54 @@
                 "shasum": ""
             },
             "require": {
-                "monolog/monolog": "~1.8",
-                "php": ">=5.3.2",
-                "symfony/config": "~2.3",
-                "symfony/dependency-injection": "~2.3",
-                "symfony/http-kernel": "~2.3",
-                "symfony/monolog-bridge": "~2.3"
+                "php": ">=5.3.3",
+                "sebastian/recursion-context": "~1.0"
             },
             "require-dev": {
-                "symfony/console": "~2.3",
-                "symfony/yaml": "~2.3"
+                "phpunit/phpunit": "~4.4"
             },
-            "type": "symfony-bundle",
+            "type": "library",
             "extra": {
                 "branch-alias": {
                     "dev-master": "2.7.x-dev"
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Symfony\\Bundle\\MonologBundle\\": ""
-                }
+                "classmap": [
+                    "src/"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "MIT"
+                "BSD-3-Clause"
             ],
             "authors": [
                 {
-                    "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
+                    "name": "Jeff Welch",
+                    "email": "whatthejeff@gmail.com"
                 },
                 {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
+                    "name": "Volker Dusch",
+                    "email": "github@wallbash.com"
+                },
+                {
+                    "name": "Bernhard Schussek",
+                    "email": "bschussek@2bepublished.at"
+                },
+                {
+                    "name": "Sebastian Bergmann",
+                    "email": "sebastian@phpunit.de"
+                },
+                {
+                    "name": "Adam Harvey",
+                    "email": "aharvey@php.net"
                 }
             ],
-            "description": "Symfony MonologBundle",
-            "homepage": "http://symfony.com",
+            "description": "Provides the functionality to export PHP variables for visualization",
+            "homepage": "http://www.github.com/sebastianbergmann/exporter",
             "keywords": [
-                "log",
-                "logging"
+                "export",
+                "exporter"
             ],
             "time": "2015-01-04 20:21:17"
         },
@@ -2655,15 +2687,10 @@
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.2",
-                "swiftmailer/swiftmailer": ">=4.2.0,~5.0",
-                "symfony/swiftmailer-bridge": "~2.1"
+                "php": ">=5.3.3"
             },
             "require-dev": {
-                "symfony/config": "~2.1",
-                "symfony/dependency-injection": "~2.1",
-                "symfony/http-kernel": "~2.1",
-                "symfony/yaml": "~2.1"
+                "phpunit/phpunit": "~4.4"
             },
             "suggest": {
                 "psr/log": "Allows logging"
@@ -2671,7 +2698,7 @@
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.3-dev"
+                    "dev-master": "1.0.x-dev"
                 }
             },
             "autoload": {
@@ -2681,7 +2708,7 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "MIT"
+                "BSD-3-Clause"
             ],
             "authors": [
                 {
@@ -2727,13 +2754,13 @@
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "Twig_Extensions_": "lib/"
-                }
+                "classmap": [
+                    "src/"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "MIT"
+                "BSD-3-Clause"
             ],
             "authors": [
                 {
@@ -2752,7 +2779,10 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "propel/propel": 20,
+        "propel/propel-bundle": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
