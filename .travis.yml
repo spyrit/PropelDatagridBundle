@@ -1,11 +1,10 @@
 language: php
 php:
-    - 5.3
     - 5.4
     - 5.5
     - 5.6
 
-before_script: 
+before_script:
     - cp Tests/Fixtures/App/app/config/parameters.yml.dist Tests/Fixtures/App/app/config/parameters.yml
     - composer install --dev
     - ./Tests/Fixtures/App/app/console propel:database:create
@@ -16,3 +15,4 @@ notifications:
   email:
     - maxime.corson@spyrit.net
     - charles.henzel@spyrit.net
+    - pierre-yves.guerder@spyrit.net
