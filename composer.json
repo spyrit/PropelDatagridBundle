@@ -15,13 +15,18 @@
             "name": "Charles Henzel",
             "email": "charles.henzel@spyrit.net",
             "role": "Developer"
+        },
+        {
+            "name": "Pierre-Yves Guerder",
+            "email": "pierre-yves.guerder@spyrit.net",
+            "role": "Developer"
         }
     ],
     "support": {
         "email": "support@spyrit.net"
     },
     "require": {
-        "php": ">=5.3.3",
+        "php": ">=5.4.9",
         "symfony/symfony": "~2.5",
         "propel/propel": "~2.0@dev",
         "propel/propel-bundle": "2.0.x-dev",
