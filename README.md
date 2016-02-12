@@ -25,7 +25,17 @@ Since composer is the simplest and fastest way to install dependencies, the only
 	},
 
 
-Note : A branch and a tag will be created once the bundle will be stabilized. In the meantime, use the dev-master branch.
+Note : we have several branches.
+
+* Branches 1.x are for Propel1
+    - Branch 1.0 is for backward-compatibility with old projects (PHP < 5.4).
+    - Branch 1.1 requires PHP-5.4+ for `csanquer/colibri-csv 1.2`
+    - Branch 1.2 integrates new functionnalities like dynamic max-per-page value
+    - Branch 1.5 is compatible with `propelorm/PropelBundle 1.5`
+* Branches 2.x are for Propel2
+    - Branch 2.0 is for backward-compatibility with old projects (PHP < 5.4).
+    - Branch 2.1 requires PHP-5.4+ for `csanquer/colibri-csv` 1.2
+    - Branch 2.2 integrates new functionnalities like dynamic max-per-page value
 
 ### Enable the bundle
 
