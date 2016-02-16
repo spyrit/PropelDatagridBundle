@@ -3,7 +3,7 @@ PropelDatagridBundle
 
 [![Join the chat at https://gitter.im/spyrit/PropelDatagridBundle](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/spyrit/PropelDatagridBundle?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-This bundle helps you to create and manage simple to complex datagrids quickly and easily. 
+This bundle helps you to create and manage simple to complex datagrids quickly and easily.
 
 Unlike other similar bundle already available on github and/or packagist, there is no magic method that will render the datagrid in you view. This technical choice allow you to completely customize your datagrid aspect and render (filter fields, buttons, columns, data displayed in each column, pagination links and informations, etc.)
 
@@ -18,11 +18,11 @@ Still skeptical ? Let's see how it works !
 Since composer is the simplest and fastest way to install dependencies, the only way to install this bundle automatically is to add the following line to your dependencies
 
 
-	"require": {
-    	...
-    	"spyrit/propel-datagrid-bundle": "dev-master"
-    	...
-	},
+    "require": {
+        ...
+        "spyrit/propel-datagrid-bundle": "dev-master"
+        ...
+    },
 
 
 Note : we have several branches.
@@ -31,7 +31,6 @@ Note : we have several branches.
     - Branch 1.0 is for backward-compatibility with old projects (PHP < 5.4).
     - Branch 1.1 requires PHP-5.4+ for `csanquer/colibri-csv 1.2`
     - Branch 1.2 integrates new functionnalities like dynamic max-per-page value
-    - Branch 1.5 is compatible with `propelorm/PropelBundle 1.5`
 * Branches 2.x are for Propel2
     - Branch 2.0 is for backward-compatibility with old projects (PHP < 5.4).
     - Branch 2.1 requires PHP-5.4+ for `csanquer/colibri-csv` 1.2
@@ -116,13 +115,13 @@ The configureQuery method must return a predefined PropelQuery object (example: 
 //...
 public function configureQuery()
 {
-	return BookQuery::create()
+    return BookQuery::create()
         ->joinWith('Author', \Criteria::LEFT_JOIN)
-    	->joinWith('Publisher', \Criteria::LEFT_JOIN)
+        ->joinWith('Publisher', \Criteria::LEFT_JOIN)
     ;
 }
 ```
-  
+
 
 ### Declare your datagrid - The Controller's Job
 
