@@ -22,6 +22,9 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     const ACTION_ADD_COLUMN     = 'add-column';
     const ACTION_REMOVE_COLUMN  = 'remove-column';
 
+    const BATCH_INCLUDE = 'include';
+    const BATCH_EXCLUDE = 'exclude';
+    
     const PARAM1 = 'param1';
     const PARAM2 = 'param2';
 
@@ -809,5 +812,91 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         );
         return $this->container->get('router')
             ->generate($route, array_merge($params, $extraParams));
+    }
+    
+    /***************************************/
+    /* Batch feature for mass actions ******/
+    /***************************************/
+     
+    /**
+     * 
+     * @return type
+     */
+    public function getBatchData()
+    {
+        return (array) json_decode(
+            $this->getRequest()->cookies->get($this->getName().'_batch')
+        );
+    }
+
+    /**
+     * Test if the record is checked
+     * @param type $identifier The record identifier
+     * @return boolean
+     */
+    public function isBatchChecked($identifier)
+    {
+        $data = $this->getBatchData();
+        if($data)
+        {
+            if($data['type'] == self::BATCH_INCLUDE 
+                && in_array($identifier, $data['checked']))
+            {
+                return true;
+            }
+            elseif($data['type'] == self::BATCH_EXCLUDE 
+                && !in_array($identifier, $data['checked']))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Test if all records are checked
+     * @return boolean
+     */
+    public function hasAllCheckedBatch()
+    {
+        $data = $this->getBatchData();
+        if($data)
+        {
+            if($data['type'] == self::BATCH_INCLUDE 
+                && count($data['checked']) == count($this->getResults()))
+            {
+                return true;
+            }
+            elseif($data['type'] == self::BATCH_EXCLUDE  
+                && count($data['checked']) == 0)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Test if at least one record is checked.
+     * @return boolean
+     */
+    public function hasCheckedBatch()
+    {
+        $data = $this->getBatchData();
+        if($data)
+        {
+            if($data['type'] == self::BATCH_INCLUDE 
+                && count($data['checked']) > 0)
+            {
+                return true;
+            }
+            elseif($data['type'] == self::BATCH_EXCLUDE  
+                && count($data['checked']) < count($this->getResults()))
+            {
+                return true;
+            }
+        }
+        return false;
+
     }
 }
