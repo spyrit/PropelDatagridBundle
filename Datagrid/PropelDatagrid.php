@@ -48,6 +48,8 @@ abstract class PropelDatagrid implements PropelDatagridInterface
      */
     protected $options;
     
+    protected $pager;
+    
     public function __construct($container, $options = array())
     {
         $this->container = $container;
@@ -76,7 +78,15 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         }
         $this->filter();
         $this->sort();
-        $this->results = $this->getQuery()->paginate($this->getCurrentPage(), $this->getMaxPerPage());
+        
+        $query = clone $this->getQuery();
+        $this->pager = $query->select(array('id'))
+            ->paginate($this->getCurrentPage(), $this->getMaxPerPage());
+        
+        $this->results = $this->getQuery()
+            ->limit($this->getMaxPerPage())
+            ->offset(($this->getCurrentPage()-1)*$this->getMaxPerPage())
+            ->find();
         
         $this->postExecute();
         
@@ -427,7 +437,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     
     public function getPager()
     {
-        return $this->getResults();
+        return $this->pager;
     }
     
     /**
