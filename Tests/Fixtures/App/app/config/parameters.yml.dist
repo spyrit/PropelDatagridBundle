@@ -5,6 +5,7 @@ parameters:
     database_name:     bookstore
     database_user:     travis
     database_password: ~
+    database_charset:  UTF8
     locale:            en
     secret:            dz7am99bonp0tbd215iznv2571bwffq3pri6966710484fy0
     debug_toolbar:          true
