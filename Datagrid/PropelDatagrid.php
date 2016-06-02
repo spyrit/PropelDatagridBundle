@@ -626,7 +626,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
      */
     protected function getRequest()
     {
-        return $this->container->get('request');
+        return $this->container->get('request_stack')->getCurrentRequest();
     }
 
     /**

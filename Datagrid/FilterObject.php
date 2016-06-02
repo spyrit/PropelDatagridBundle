@@ -2,7 +2,8 @@
 
 namespace Spyrit\PropelDatagridBundle\Datagrid;
 
-use \Symfony\Component\Form\FormFactory;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\FormFactory;
 
 /**
  * @author Maxime CORSON <maxime.corson@spyrit.net>
@@ -21,7 +22,7 @@ class FilterObject
     
     public function __construct(FormFactory $factory, $name, $options = array('csrf_protection' => false))
     {
-        $this->builder = $factory->createNamedBuilder('filter_'.$name, 'form', null, $options);
+        $this->builder = $factory->createNamedBuilder('filter_'.$name, FormType::class, null, $options);
     }
     
     public function add($name, $type, $options = array(), $value = null)

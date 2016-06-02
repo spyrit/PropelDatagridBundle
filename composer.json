@@ -28,6 +28,7 @@
     "require": {
         "php": ">=5.5.9",
         "symfony/symfony": "~3.0",
+	"symfony/monolog-bundle": "~2.4",
         "propel/propel": "~2.0@dev",
         "propel/propel-bundle": "3.0.x-dev",
         "csanquer/colibri-csv": "~1.2"
