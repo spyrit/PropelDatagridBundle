@@ -18,9 +18,18 @@ CREATE TABLE `book`
     `publisher_id` INTEGER COMMENT 'Foreign Key Publisher',
     `author_id` INTEGER COMMENT 'Foreign Key Author',
     PRIMARY KEY (`id`),
-    INDEX `book_FI_1` (`publisher_id`),
-    INDEX `book_FI_2` (`author_id`)
-) ENGINE=MyISAM COMMENT='Book Table';
+    INDEX `book_fi_35872e` (`publisher_id`),
+    INDEX `book_fi_ea464c` (`author_id`),
+    CONSTRAINT `book_fk_35872e`
+        FOREIGN KEY (`publisher_id`)
+        REFERENCES `publisher` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `book_fk_ea464c`
+        FOREIGN KEY (`author_id`)
+        REFERENCES `author` (`id`)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL
+) ENGINE=InnoDB COMMENT='Book Table';
 
 -- ---------------------------------------------------------------------
 -- publisher
@@ -33,7 +42,7 @@ CREATE TABLE `publisher`
     `id` INTEGER NOT NULL AUTO_INCREMENT COMMENT 'Publisher Id',
     `name` VARCHAR(128) DEFAULT 'Penguin' NOT NULL COMMENT 'Publisher Name',
     PRIMARY KEY (`id`)
-) ENGINE=MyISAM COMMENT='Publisher Table';
+) ENGINE=InnoDB COMMENT='Publisher Table';
 
 -- ---------------------------------------------------------------------
 -- author
@@ -49,7 +58,7 @@ CREATE TABLE `author`
     `email` VARCHAR(128) COMMENT 'E-Mail Address',
     `age` INTEGER COMMENT 'The authors age',
     PRIMARY KEY (`id`)
-) ENGINE=MyISAM COMMENT='Author Table';
+) ENGINE=InnoDB COMMENT='Author Table';
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

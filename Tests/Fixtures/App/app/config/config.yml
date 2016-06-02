@@ -12,22 +12,16 @@ framework:
     profiler:        { only_exceptions: false }
     templating:
         engines: [ twig ]
-        
-propel:
-    build_properties:
-        propel.database: mysql
-        propel.php.dir: "%kernel.root_dir%/../src/Spyrit/TestBundle/Model"
 
-    path:       "%kernel.root_dir%/../../../../vendor/propel/propel1"
-    phing_path: "%kernel.root_dir%/../../../../vendor/phing"
-    logging:    %kernel.debug%
-    dbal:
-        default_connection:           bookstore
+propel:
+    database:
         connections:
             bookstore:
-                driver:               %database_driver%
-                user:                 %database_user%
-                password:             %database_password%
-                dsn:                  %database_driver%:host=%database_host%;dbname=%database_name%;charset=UTF8
-                options:              {}
-                attributes:           {}
+                adapter:    "%database_driver%"
+                user:       "%database_user%"
+                password:   "%database_password%"
+                dsn:        "%database_driver%:host=%database_host%;dbname=%database_name%;charset=%database_charset%"
+
+        adapters:
+            mysql:
+                tableType: InnoDB
