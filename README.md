@@ -27,14 +27,15 @@ Since composer is the simplest and fastest way to install dependencies, the only
 
 Note : we have several branches.
 
-* Branches 1.x are for Propel1
+* Branches 1.x are for Propel1 and Symfony2
     - Branch 1.0 is for backward-compatibility with old projects (PHP < 5.4).
     - Branch 1.1 requires PHP-5.4+ for `csanquer/colibri-csv 1.2`
     - Branch 1.2 integrates new functionnalities like dynamic max-per-page value
-* Branches 2.x are for Propel2
+* Branches 2.x are for Propel2 and Symfony2
     - Branch 2.0 is for backward-compatibility with old projects (PHP < 5.4).
     - Branch 2.1 requires PHP-5.4+ for `csanquer/colibri-csv` 1.2
     - Branch 2.2 integrates new functionnalities like dynamic max-per-page value
+* Branches 3.x are for Propel2 and Symfony3
 
 ### Enable the bundle
 
