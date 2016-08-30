@@ -2,8 +2,9 @@
 
 namespace Spyrit\PropelDatagridBundle\Datagrid;
 
+use Propel\Runtime\ActiveQuery\Criteria;
 use Spyrit\PropelDatagridBundle\Datagrid\PropelDatagridInterface;
-use \Criteria;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 /**
  * Datagrid management class that support and handle pagination, sort, filter
@@ -229,7 +230,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
                 $method = 'filterBy'.$this->container->get('spyrit.util.inflector')->camelize($key);
                 $this->filtered = true;
 
-                if($this->filter->getType($key) === 'text')
+                if($this->filter->getType($key) === 'text' || $this->filter->getType($key) === TextType::class)
                 {
                     $this->getQuery()->$method('%'.$value.'%', Criteria::LIKE);
                 }
