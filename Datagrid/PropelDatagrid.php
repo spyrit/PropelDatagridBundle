@@ -63,6 +63,12 @@ abstract class PropelDatagrid implements PropelDatagridInterface
      */
     protected $options;
 
+    /**
+     * True if the datagrid has at least one active filter
+     * @var boolean 
+     */
+    protected $filtered = false;
+    
     public function __construct($container, $options = array())
     {
         $this->container = $container;
@@ -222,6 +228,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
             if(!$empty)
             {
                 $method = 'filterBy'.$this->container->get('spyrit.util.inflector')->camelize($key);
+                $this->filtered = true;
 
                 if($this->filter->getType($key) === 'text' || $this->filter->getType($key) === TextType::class)
                 {
@@ -234,6 +241,15 @@ abstract class PropelDatagrid implements PropelDatagridInterface
                 }
             }
         }
+    }
+    
+    /**
+     * Return true if the datagrid has at least one active filter
+     * @return boolean
+     */
+    public function isFiltered()
+    {
+        return $this->filtered;
     }
 
     protected function buildForm()
