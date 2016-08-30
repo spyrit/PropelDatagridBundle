@@ -2,7 +2,7 @@
 
 namespace Spyrit\PropelDatagridBundle\Datagrid;
 
-use Propel\Runtime\ActiveQuery\Criteria;
+use \Criteria;
 use Spyrit\PropelDatagridBundle\Datagrid\PropelDatagridInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
@@ -65,10 +65,10 @@ abstract class PropelDatagrid implements PropelDatagridInterface
 
     /**
      * True if the datagrid has at least one active filter
-     * @var boolean 
+     * @var boolean
      */
     protected $filtered = false;
-    
+
     public function __construct($container, $options = array())
     {
         $this->container = $container;
@@ -242,7 +242,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
             }
         }
     }
-    
+
     /**
      * Return true if the datagrid has at least one active filter
      * @return boolean
