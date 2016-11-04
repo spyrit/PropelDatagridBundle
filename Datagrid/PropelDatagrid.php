@@ -2,8 +2,9 @@
 
 namespace Spyrit\PropelDatagridBundle\Datagrid;
 
-use Spyrit\PropelDatagridBundle\Datagrid\PropelDatagridInterface;
 use \Criteria;
+use Spyrit\PropelDatagridBundle\Datagrid\PropelDatagridInterface;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 /**
  * Datagrid management class that support and handle pagination, sort, filter
@@ -24,7 +25,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
 
     const BATCH_INCLUDE = 'include';
     const BATCH_EXCLUDE = 'exclude';
-    
+
     const PARAM1 = 'param1';
     const PARAM2 = 'param2';
 
@@ -67,10 +68,10 @@ abstract class PropelDatagrid implements PropelDatagridInterface
 
     /**
      * True if the datagrid has at least one active filter
-     * @var boolean 
+     * @var boolean
      */
     protected $filtered = false;
-    
+
     public function __construct($container, $options = array())
     {
         $this->container = $container;
@@ -232,7 +233,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
                 $method = 'filterBy'.$this->container->get('spyrit.util.inflector')->camelize($key);
                 $this->filtered = true;
 
-                if($this->filter->getType($key) === 'text')
+                if($this->filter->getType($key) === 'text' || $this->filter->getType($key) === TextType::class)
                 {
                     $this->getQuery()->$method('%'.$value.'%', Criteria::LIKE);
                 }
@@ -244,7 +245,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
             }
         }
     }
-    
+
     /**
      * Return true if the datagrid has at least one active filter
      * @return boolean
@@ -813,13 +814,13 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         return $this->container->get('router')
             ->generate($route, array_merge($params, $extraParams));
     }
-    
+
     /***************************************/
     /* Batch feature for mass actions ******/
     /***************************************/
-     
+
     /**
-     * 
+     *
      * @return type
      */
     public function getBatchData()
@@ -839,12 +840,12 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         $data = $this->getBatchData();
         if($data)
         {
-            if($data['type'] == self::BATCH_INCLUDE 
+            if($data['type'] == self::BATCH_INCLUDE
                 && in_array($identifier, $data['checked']))
             {
                 return true;
             }
-            elseif($data['type'] == self::BATCH_EXCLUDE 
+            elseif($data['type'] == self::BATCH_EXCLUDE
                 && !in_array($identifier, $data['checked']))
             {
                 return true;
@@ -862,12 +863,12 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         $data = $this->getBatchData();
         if($data)
         {
-            if($data['type'] == self::BATCH_INCLUDE 
+            if($data['type'] == self::BATCH_INCLUDE
                 && count($data['checked']) == count($this->getResults()))
             {
                 return true;
             }
-            elseif($data['type'] == self::BATCH_EXCLUDE  
+            elseif($data['type'] == self::BATCH_EXCLUDE
                 && count($data['checked']) == 0)
             {
                 return true;
@@ -885,12 +886,12 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         $data = $this->getBatchData();
         if($data)
         {
-            if($data['type'] == self::BATCH_INCLUDE 
+            if($data['type'] == self::BATCH_INCLUDE
                 && count($data['checked']) > 0)
             {
                 return true;
             }
-            elseif($data['type'] == self::BATCH_EXCLUDE  
+            elseif($data['type'] == self::BATCH_EXCLUDE
                 && count($data['checked']) < count($this->getResults()))
             {
                 return true;
