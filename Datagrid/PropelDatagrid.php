@@ -346,6 +346,9 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     public function updateSort()
     {
         $sort = $this->getSessionValue('sort', $this->getDefaultSort());
+        if(isset($this->options['multi_sort']) && ($this->options['multi_sort'] == false)) {
+            unset($sort);
+        }
         $sort[$this->getRequestedSortColumn()] = $this->getRequestedSortOrder();
         $this->setSessionValue('sort', $sort);
     }
