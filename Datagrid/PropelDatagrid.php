@@ -21,7 +21,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     const ACTION_LIMIT          = 'limit';
     const ACTION_ADD_COLUMN     = 'add-column';
     const ACTION_REMOVE_COLUMN  = 'remove-column';
-    
+
     const BATCH_INCLUDE = 'include';
     const BATCH_EXCLUDE = 'exclude';
 
@@ -75,12 +75,13 @@ abstract class PropelDatagrid implements PropelDatagridInterface
 
     /**
      * @param type $container
+     * @param type $options
      * @return \self
      */
-    public static function create($container)
+    public static function create($container, $options = array())
     {
         $class = get_called_class();
-        return new $class($container);
+        return new $class($container,$options);
     }
 
     public function execute()
@@ -345,6 +346,9 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     public function updateSort()
     {
         $sort = $this->getSessionValue('sort', $this->getDefaultSort());
+        if(isset($this->options['multi_sort']) && ($this->options['multi_sort'] == false)) {
+            unset($sort);
+        }
         $sort[$this->getRequestedSortColumn()] = $this->getRequestedSortOrder();
         $this->setSessionValue('sort', $sort);
     }
@@ -797,13 +801,13 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         return $this->container->get('router')
             ->generate($route, array_merge($params, $extraParams));
     }
-    
+
     /***************************************/
     /* Batch feature for mass actions ******/
     /***************************************/
-    
+
     /**
-     * 
+     *
      * @return type
      */
     public function getBatchData()
@@ -812,7 +816,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
             $this->getRequest()->cookies->get($this->getName().'_batch')
         );
     }
-    
+
     /**
      * Test if the record is checked
      * @param type $identifier The record identifier
@@ -823,12 +827,12 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         $data = $this->getBatchData();
         if($data)
         {
-            if($data['type'] == self::BATCH_INCLUDE 
+            if($data['type'] == self::BATCH_INCLUDE
                 && in_array($identifier, $data['checked']))
             {
                 return true;
             }
-            elseif($data['type'] == self::BATCH_EXCLUDE 
+            elseif($data['type'] == self::BATCH_EXCLUDE
                 && !in_array($identifier, $data['checked']))
             {
                 return true;
@@ -836,7 +840,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         }
         return false;
     }
-    
+
     /**
      * Test if all records are checked
      * @return boolean
@@ -846,12 +850,12 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         $data = $this->getBatchData();
         if($data)
         {
-            if($data['type'] == self::BATCH_INCLUDE 
+            if($data['type'] == self::BATCH_INCLUDE
                 && count($data['checked']) == count($this->getResults()))
             {
                 return true;
             }
-            elseif($data['type'] == self::BATCH_EXCLUDE  
+            elseif($data['type'] == self::BATCH_EXCLUDE
                 && count($data['checked']) == 0)
             {
                 return true;
@@ -859,7 +863,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         }
         return false;
     }
-    
+
     /**
      * Test if at least one record is checked.
      * @return boolean
@@ -869,18 +873,18 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         $data = $this->getBatchData();
         if($data)
         {
-            if($data['type'] == self::BATCH_INCLUDE 
+            if($data['type'] == self::BATCH_INCLUDE
                 && count($data['checked']) > 0)
             {
                 return true;
             }
-            elseif($data['type'] == self::BATCH_EXCLUDE  
+            elseif($data['type'] == self::BATCH_EXCLUDE
                 && count($data['checked']) < count($this->getResults()))
             {
                 return true;
             }
         }
         return false;
-        
+
     }
 }
