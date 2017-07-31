@@ -407,15 +407,23 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     /*********************************/
 
     /**
-     * @param type $name
-     * @param type $params
+     * @param type $name The name of export class declare in getExports()
+     * @param type $params The $params of export class
+     * @param type $usePreExecute execute preExecute
+     * @param type $usePostExecute execute postExecute
      * @return self
      */
-    public function export($name, $params = array())
+    public function export($name, $params = array(), $usePreExecute = false, $usePostExecute = false)
     {
         $class = $this->getExport($name);
+        if ($usePreExecute) {
+            $this->preExecute();
+        }
         $this->filter();
         $this->sort();
+        if ($usePostExecute) {
+            $this->postExecute();
+        }
 
         $export = new $class($this->getQuery(), $params);
         return $export->execute();
