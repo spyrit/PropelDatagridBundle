@@ -62,14 +62,16 @@ abstract class PropelDatagrid implements PropelDatagridInterface
 
     /**
      * Options that you can use in your Datagrid methods if you need
-     * @var integer
+     * @var array
      */
-    protected $options;
+    protected $options = array(
+        'multi_sort' => false,
+    );
 
     public function __construct($container, $options = array())
     {
         $this->container = $container;
-        $this->options = $options;
+        $this->options = array_merge($this->options, $options);
         $this->query = $this->configureQuery();
         $this->buildForm();
     }
@@ -78,10 +80,10 @@ abstract class PropelDatagrid implements PropelDatagridInterface
      * @param type $container
      * @return \self
      */
-    public static function create($container)
+    public static function create($container, $options = array())
     {
         $class = get_called_class();
-        return new $class($container);
+        return new $class($container, $options);
     }
 
     public function execute()
