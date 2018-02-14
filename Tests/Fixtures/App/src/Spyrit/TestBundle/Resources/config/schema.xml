@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<database name="bookstore" namespace="Spyrit\TestBundle\Model" defaultIdMethod="native"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/propelorm/Propel2/master/resources/xsd/database.xsd">
+
+    <table name="book" description="Book Table">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Book Id" />
+        <column name="title" type="VARCHAR" required="true" description="Book Title" primaryString="true" />
+        <column name="isbn" required="true" type="VARCHAR" size="24" phpName="ISBN" description="ISBN Number" primaryString="false" />
+        <column name="price" required="false" type="FLOAT" description="Price of the book." />
+        <column name="publisher_id" required="false" type="INTEGER" description="Foreign Key Publisher" />
+        <column name="author_id" required="false" type="INTEGER" description="Foreign Key Author" />
+        <foreign-key foreignTable="publisher" onDelete="setnull">
+            <reference local="publisher_id" foreign="id" />
+        </foreign-key>
+        <foreign-key foreignTable="author" onDelete="setnull" onUpdate="cascade">
+            <reference local="author_id" foreign="id" />
+        </foreign-key>
+    </table>
+
+    <table name="publisher" description="Publisher Table" defaultStringFormat="XML">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Publisher Id" />
+        <column name="name" required="true" type="VARCHAR" size="128" default="Penguin" primaryString="true" description="Publisher Name" />
+    </table>
+
+    <table name="author" description="Author Table">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Author Id" />
+        <column name="first_name" required="true" type="VARCHAR" size="128" description="First Name" />
+        <column name="last_name" required="true" type="VARCHAR" size="128" description="Last Name" />
+        <column name="email" type="VARCHAR" size="128" description="E-Mail Address" />
+        <column name="age" type="INTEGER" description="The authors age" />
+    </table>
+
+</database>
