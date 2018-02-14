@@ -1,9 +1,9 @@
 language: php
 
 php:
-    - 5.6
     - 7.0
     - 7.1
+    - 7.2
 
 services:
   - mysql
@@ -17,6 +17,4 @@ before_script:
 
 notifications:
   email:
-    - maxime.corson@spyrit.net
-    - charles.henzel@spyrit.net
     - pierre-yves.guerder@spyrit.net
