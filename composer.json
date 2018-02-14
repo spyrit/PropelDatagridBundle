@@ -34,7 +34,7 @@
         "csanquer/colibri-csv": "~1.2"
     },
     "require-dev": {
-        "phpunit/phpunit": "~7.0"
+        "phpunit/phpunit": "~6.0|~7.0"
     },
     "autoload": {
         "psr-0": { "Spyrit\\PropelDatagridBundle": "" }
