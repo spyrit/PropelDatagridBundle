@@ -27,7 +27,7 @@
     },
     "require": {
         "php": ">=7.0.0",
-        "symfony/symfony": "~3.4",
+        "symfony/symfony": "~3.4|~4.0",
         "symfony/monolog-bundle": "~2.4|~3.0",
         "propel/propel": "2.0.x-dev",
         "propel/propel-bundle": "4.0.x-dev",
