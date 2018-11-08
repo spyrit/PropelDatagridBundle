@@ -1,3 +1,4 @@
 services:
     spyrit.util.inflector:
+        public: true
         class: Spyrit\PropelDatagridBundle\Util\Inflector
