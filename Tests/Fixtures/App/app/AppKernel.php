@@ -11,7 +11,7 @@ class AppKernel extends Kernel
             new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new Symfony\Bundle\SecurityBundle\SecurityBundle(),
             new Symfony\Bundle\TwigBundle\TwigBundle(),
-            new Propel\PropelBundle\PropelBundle(),
+            new Propel\Bundle\PropelBundle\PropelBundle(),
             new Spyrit\PropelDatagridBundle\SpyritPropelDatagridBundle(),
             new Spyrit\TestBundle\SpyritTestBundle(),
         );
