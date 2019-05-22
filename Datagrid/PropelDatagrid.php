@@ -146,14 +146,14 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         return $this->getRequest()->get(self::ACTION) == $action;
     }
 
-    private function getSessionValue($name, $default = null)
+    protected function getSessionValue($name, $default = null)
     {
         return $this->getRequest()
             ->getSession()
             ->get($this->getSessionName().'.'.$name, $default);
     }
 
-    private function setSessionValue($name, $value)
+    protected function setSessionValue($name, $value)
     {
         return $this->getRequest()
             ->getSession()
@@ -168,7 +168,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     }
 
     /*********************************/
-    /* Filter features here **********/
+    /** Filter features here *********/
     /*********************************/
 
     private function filter()
@@ -307,7 +307,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     }
 
     /*********************************/
-    /* Sort features here ************/
+    /** Sort features here ***********/
     /*********************************/
 
     private function sort()
@@ -384,7 +384,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     }
 
     /*********************************/
-    /* Export features here **********/
+    /** Export features here *********/
     /*********************************/
 
     /**
@@ -435,7 +435,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     }
 
     /*********************************/
-    /* Dynamic columns feature here **/
+    /** Dynamic columns feature here */
     /*********************************/
 
     private function removeColumn()
@@ -506,7 +506,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     }
 
     /*********************************/
-    /* Max per page feature here *****/
+    /** Max per page feature here ****/
     /*********************************/
 
     private function limit()
@@ -540,7 +540,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     }
 
     /*********************************/
-    /* Routing helper methods here ***/
+    /** Routing helper methods here **/
     /*********************************/
 
     protected function getRequestedAction($default = null)
@@ -594,7 +594,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     }
 
     /*********************************/
-    /* Global service shortcuts ******/
+    /** Global service shortcuts *****/
     /*********************************/
 
     /**
@@ -776,7 +776,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     }
 
     /***************************************/
-    /* Batch feature for mass actions ******/
+    /** Batch feature for mass actions *****/
     /***************************************/
 
     /**
