@@ -174,14 +174,10 @@ class Inflector
      */
     public function ordinalize($number)
     {
-        if (in_array(($number % 100), range(11, 13)))
-        {
+        if (in_array(($number % 100), range(11, 13))) {
             return $number . 'th';
-        }
-        else
-        {
-            switch (($number % 10))
-            {
+        } else {
+            switch (($number % 10)) {
                 case 1:
                     return $number . 'st';
                     break;
@@ -196,5 +192,4 @@ class Inflector
             }
         }
     }
-
 }

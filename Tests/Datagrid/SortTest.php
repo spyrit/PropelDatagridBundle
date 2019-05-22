@@ -8,6 +8,5 @@ class SortTest extends WebTestCase
 {
     public function testResults()
     {
-        
     }
 }

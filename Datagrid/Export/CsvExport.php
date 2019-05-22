@@ -5,6 +5,7 @@ use Spyrit\PropelDatagridBundle\Datagrid\Export\PropelExport;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use CSanquer\ColibriCsv\CsvWriter;
+
 /**
  * @author Maxime CORSON <maxime.corson@spyrit.net>
  */
@@ -12,11 +13,11 @@ abstract class CsvExport implements PropelExport
 {
     protected $content;
     /**
-     * @var array 
+     * @var array
      */
     protected $params;
     /**
-     * @var PropelQuery 
+     * @var PropelQuery
      */
     protected $query;
     
@@ -31,15 +32,13 @@ abstract class CsvExport implements PropelExport
         $writer = new CsvWriter($this->getCsvWriterOptions());
         $writer->createTempStream();
         
-        if($this->getHeader())
-        {
+        if ($this->getHeader()) {
             $writer->writeRow($this->getHeader());
         }
         
         $results = $this->query->find();
 
-        foreach($results as $result) 
-        {
+        foreach ($results as $result) {
             $writer->writeRow($this->getRow($result));
         }
 
@@ -51,7 +50,7 @@ abstract class CsvExport implements PropelExport
     
     public function getResponse()
     {
-        $response = new Response($this->content); 
+        $response = new Response($this->content);
         $disposition = $response->headers->makeDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
             $this->getFilename()
@@ -69,9 +68,9 @@ abstract class CsvExport implements PropelExport
         return $response;
     }
     
-    public abstract function getHeader();
+    abstract public function getHeader();
     
-    public abstract function getRow($object);
+    abstract public function getRow($object);
     
     public function getDelimiter()
     {
@@ -80,10 +79,9 @@ abstract class CsvExport implements PropelExport
     
     protected function getCsvWriterOptions()
     {
-        if(isset($this->params['csvWriter']))
-        {
+        if (isset($this->params['csvWriter'])) {
             return $this->params['csvWriter'];
         }
-        return array();
+        return [];
     }
 }

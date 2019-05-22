@@ -8,6 +8,5 @@ class FilterTest extends WebTestCase
 {
     public function testResults()
     {
-        
     }
 }

@@ -8,6 +8,5 @@ class PagerTest extends WebTestCase
 {
     public function testResults()
     {
-        
     }
 }
