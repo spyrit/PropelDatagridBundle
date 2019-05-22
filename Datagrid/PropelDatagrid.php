@@ -3,6 +3,7 @@
 namespace Spyrit\PropelDatagridBundle\Datagrid;
 
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Collection\ObjectCollection;
 use Spyrit\PropelDatagridBundle\Datagrid\PropelDatagridInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
@@ -204,7 +205,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         foreach ($data as $key => $value) {
             $empty = true;
 
-            if (($value instanceof \PropelCollection || is_array($value))) {
+            if (($value instanceof ObjectCollection || is_array($value))) {
                 if (count($value) > 0) {
                     $empty = false;
                 }
@@ -214,8 +215,9 @@ abstract class PropelDatagrid implements PropelDatagridInterface
 
             if (!$empty) {
                 $method = 'filterBy'.$this->container->get('spyrit.util.inflector')->camelize($key);
+                $type = $this->filter->getType($key);
 
-                if ($this->filter->getType($key) === 'text' || $this->filter->getType($key) === TextType::class) {
+                if ($type === 'text' || $type === TextType::class) {
                     $this->getQuery()->$method('%'.$value.'%', Criteria::LIKE);
                 } else {
                     $this->getQuery()->$method($value);
