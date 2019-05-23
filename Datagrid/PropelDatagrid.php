@@ -5,6 +5,7 @@ namespace Spyrit\PropelDatagridBundle\Datagrid;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Collection\ObjectCollection;
 use Spyrit\PropelDatagridBundle\Datagrid\PropelDatagridInterface;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 /**
@@ -213,14 +214,28 @@ abstract class PropelDatagrid implements PropelDatagridInterface
                 $empty = false;
             }
 
+            $data = $this->filter->getData();
+
             if (!$empty) {
                 $method = 'filterBy'.$this->container->get('spyrit.util.inflector')->camelize($key);
                 $type = $this->filter->getType($key);
 
-                if ($type === 'text' || $type === TextType::class) {
-                    $this->getQuery()->$method('%'.$value.'%', Criteria::LIKE);
-                } else {
-                    $this->getQuery()->$method($value);
+                switch ($type) {
+                    case TextType::class:
+                        $this->getQuery()->$method('%'.$value.'%', Criteria::LIKE);
+                        break;
+                    case CollectionType::class:
+                        foreach ($data[$key] as $val) {
+                            foreach ($val as $k => $v) {
+                                if ($v) {
+                                    $this->getQuery()->$method($k, $v);
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        $this->getQuery()->$method($value);
+                        break;
                 }
             }
         }
