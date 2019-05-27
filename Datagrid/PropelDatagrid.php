@@ -50,6 +50,11 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     protected $filter;
 
     /**
+     * @var bool
+     */
+    protected $isFiltered;
+
+    /**
      * Results of the query (in fact this is a PropelPager object which contains
      * the result set and some methods to display pager and extra things)
      * @var \PropelPager
@@ -184,6 +189,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
             $data = $this->getSessionValue('filter', $this->getDefaultFilters());
         }
 
+        $this->isFiltered = false;
         $this->filter->submit($data);
         $form = $this->filter->getForm();
         $formData = $form->getData();
@@ -206,15 +212,11 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         foreach ($data as $key => $value) {
             $empty = true;
 
-            if (($value instanceof ObjectCollection || is_array($value))) {
-                if (count($value) > 0) {
-                    $empty = false;
-                }
+            if ($value instanceof ObjectCollection || is_array($value)) {
+                $empty = count($value) == 0;
             } elseif (!empty($value) || $value === 0) {
                 $empty = false;
             }
-
-            $data = $this->filter->getData();
 
             if (!$empty) {
                 $method = 'filterBy'.$this->container->get('spyrit.util.inflector')->camelize($key);
@@ -223,18 +225,30 @@ abstract class PropelDatagrid implements PropelDatagridInterface
                 switch ($type) {
                     case TextType::class:
                         $this->getQuery()->$method('%'.$value.'%', Criteria::LIKE);
+                        $this->isFiltered = true;
                         break;
                     case CollectionType::class:
-                        foreach ($data[$key] as $val) {
-                            foreach ($val as $k => $v) {
-                                if ($v) {
-                                    $this->getQuery()->$method($k, $v);
+                        $data = $this->filter->getData();
+                        if (isset($data[$key])) {
+                            foreach ($data[$key] as $val) {
+                                foreach ($val as $k => $v) {
+                                    if ($v) {
+                                        if (isset($v[0]) && is_array($v[0])) {
+                                            foreach ($v[0] as $k2 => $v2) {
+                                                $this->getQuery()->$method($k, $k2, $v2);
+                                            }
+                                        } else {
+                                            $this->getQuery()->$method($k, $v);
+                                        }
+                                        $this->isFiltered = true;
+                                    }
                                 }
                             }
                         }
                         break;
                     default:
                         $this->getQuery()->$method($value);
+                        $this->isFiltered = true;
                         break;
                 }
             }
@@ -637,6 +651,11 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     protected function getFormFactory()
     {
         return $this->container->get('form.factory');
+    }
+
+    public function isFiltered()
+    {
+        return $this->isFiltered;
     }
 
     public function getQuery()
