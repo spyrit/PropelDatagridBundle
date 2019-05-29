@@ -233,7 +233,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
                             foreach ($data[$key] as $val) {
                                 foreach ($val as $k => $v) {
                                     if ($v) {
-                                        $v0 = is_array($v) ? array_shift($v) : null;
+                                        $v0 = is_array($v) ? current($v) : null;
                                         if (is_array($v0)) {
                                             foreach ($v0 as $k2 => $v2) {
                                                 $this->getQuery()->$method($k, $k2, $v2);
