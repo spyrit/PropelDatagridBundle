@@ -346,10 +346,8 @@ abstract class PropelDatagrid implements PropelDatagridInterface
 
         foreach ($sort as $column => $order) {
             $method = 'orderBy'.ucfirst($column);
-            try {
+            if (method_exists($this->getQuery(), $method)) {
                 $this->getQuery()->{$method}($order);
-            } catch (\Exception $e) {
-                throw new \Exception('There is no method "'.$method.'" to sort the datagrid on column "'.$column.'". Just create it in the "'.get_class($this->query).'" object.');
             }
         }
     }
