@@ -349,7 +349,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
             try {
                 $this->getQuery()->{$method}($order);
             } catch (\Exception $e) {
-                throw new \Exception('There is no method "'.$method.'" to sort the datagrid on column "'.$sort['column'].'". Just create it in the "'.get_class($this->query).'" object.');
+                throw new \Exception('There is no method "'.$method.'" to sort the datagrid on column "'.$column.'". Just create it in the "'.get_class($this->query).'" object.');
             }
         }
     }
