@@ -346,9 +346,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
 
         foreach ($sort as $column => $order) {
             $method = 'orderBy'.ucfirst($column);
-            if (method_exists($this->getQuery(), $method)) {
-                $this->getQuery()->{$method}($order);
-            }
+            @$this->getQuery()->{$method}($order); // fail silently if the method doesn't exist
         }
     }
 
