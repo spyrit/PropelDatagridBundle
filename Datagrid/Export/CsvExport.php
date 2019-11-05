@@ -20,22 +20,22 @@ abstract class CsvExport implements PropelExport
      * @var PropelQuery
      */
     protected $query;
-    
+
     public function __construct($query, $params)
     {
         $this->query = $query;
         $this->params = $params;
     }
-    
+
     public function execute()
     {
         $writer = new CsvWriter($this->getCsvWriterOptions());
         $writer->createTempStream();
-        
+
         if ($this->getHeader()) {
             $writer->writeRow($this->getHeader());
         }
-        
+
         $results = $this->query->find();
 
         foreach ($results as $result) {
@@ -44,10 +44,10 @@ abstract class CsvExport implements PropelExport
 
         $this->content = $writer->getFileContent();
         $writer->close();
-        
+
         return $this;
     }
-    
+
     public function getResponse()
     {
         $response = new Response($this->content);
@@ -58,7 +58,7 @@ abstract class CsvExport implements PropelExport
 
         $response->headers->set('Content-Description', 'File Transfer');
         $response->headers->set('Content-Disposition', $disposition);
-        $response->headers->set('Content-Type', 'application/vnd.ms-excel');
+        $response->headers->set('Content-Type', 'text/csv');
         $response->headers->set('Content-Transfer-Encoding', 'binary');
         $response->headers->set('Expires', '0');
         $response->headers->set('Cache-Control', 'must-revalidate, post-check=0, pre-check=0');
@@ -67,16 +67,16 @@ abstract class CsvExport implements PropelExport
         $response->setCharset('UTF-8');
         return $response;
     }
-    
+
     abstract public function getHeader();
-    
+
     abstract public function getRow($object);
-    
+
     public function getDelimiter()
     {
         return ';';
     }
-    
+
     protected function getCsvWriterOptions()
     {
         if (isset($this->params['csvWriter'])) {
