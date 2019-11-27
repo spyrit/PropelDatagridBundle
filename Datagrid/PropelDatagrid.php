@@ -177,7 +177,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     /** Filter features here *********/
     /*********************************/
 
-    private function filter()
+    public function filter()
     {
         if (in_array(
                 $this->getRequest()->getMethod(),
