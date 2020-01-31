@@ -684,13 +684,13 @@ abstract class PropelDatagrid implements PropelDatagridInterface
      */
     public function getPaginationPath($route, $page, $extraParams = [])
     {
-        $params = [
+        $params = array_merge($extraParams, [
             self::ACTION => self::ACTION_PAGE,
             self::ACTION_DATAGRID => $this->getName(),
             self::PARAM1 => $page,
-        ];
-        return $this->container->get('router')
-            ->generate($route, array_merge($params, $extraParams));
+        ]);
+
+        return $this->container->get('router')->generate($route, $params);
     }
 
     /**
@@ -701,12 +701,12 @@ abstract class PropelDatagrid implements PropelDatagridInterface
      */
     public function getResetPath($route, $extraParams = [])
     {
-        $params = [
+        $params = array_merge($extraParams, [
             self::ACTION => self::ACTION_RESET,
             self::ACTION_DATAGRID => $this->getName(),
-        ];
-        return $this->container->get('router')
-            ->generate($route, array_merge($params, $extraParams));
+        ]);
+
+        return $this->container->get('router')->generate($route, $params);
     }
 
     /**
@@ -720,14 +720,14 @@ abstract class PropelDatagrid implements PropelDatagridInterface
      */
     public function getSortPath($route, $column, $order, $extraParams = [])
     {
-        $params = [
+        $params = array_merge($extraParams, [
             self::ACTION => self::ACTION_SORT,
             self::ACTION_DATAGRID => $this->getName(),
             self::PARAM1 => $column,
             self::PARAM2 => $order,
-        ];
-        return $this->container->get('router')
-            ->generate($route, array_merge($params, $extraParams));
+        ]);
+
+        return $this->container->get('router')->generate($route, $params);
     }
 
     /**
@@ -739,13 +739,13 @@ abstract class PropelDatagrid implements PropelDatagridInterface
      */
     public function getRemoveSortPath($route, $column, $extraParams = [])
     {
-        $params = [
+        $params = array_merge($extraParams, [
             self::ACTION => self::ACTION_REMOVE_SORT,
             self::ACTION_DATAGRID => $this->getName(),
             self::PARAM1 => $column,
-        ];
-        return $this->container->get('router')
-            ->generate($route, array_merge($params, $extraParams));
+        ]);
+
+        return $this->container->get('router')->generate($route, $params);
     }
 
     /**
@@ -758,14 +758,14 @@ abstract class PropelDatagrid implements PropelDatagridInterface
      */
     public function getNewColumnPath($route, $newColumn, $precedingColumn, $extraParams = [])
     {
-        $params = [
+        $params = array_merge($extraParams, [
             self::ACTION => self::ACTION_ADD_COLUMN,
             self::ACTION_DATAGRID => $this->getName(),
             self::PARAM1 => $newColumn,
             self::PARAM2 => $precedingColumn,
-        ];
-        return $this->container->get('router')
-            ->generate($route, array_merge($params, $extraParams));
+        ]);
+
+        return $this->container->get('router')->generate($route, $params);
     }
 
     /**
@@ -778,13 +778,13 @@ abstract class PropelDatagrid implements PropelDatagridInterface
      */
     public function getRemoveColumnPath($route, $column, $extraParams = [])
     {
-        $params = [
+        $params = array_merge($extraParams, [
             self::ACTION => self::ACTION_REMOVE_COLUMN,
             self::ACTION_DATAGRID => $this->getName(),
             self::PARAM1 => $column,
-        ];
-        return $this->container->get('router')
-            ->generate($route, array_merge($params, $extraParams));
+        ]);
+
+        return $this->container->get('router')->generate($route, $params);
     }
 
     /**
@@ -797,13 +797,13 @@ abstract class PropelDatagrid implements PropelDatagridInterface
      */
     public function getMaxPerPagePath($route, $limit, $extraParams = [])
     {
-        $params = [
+        $params = array_merge($extraParams, [
             self::ACTION => self::ACTION_LIMIT,
             self::ACTION_DATAGRID => $this->getName(),
             self::PARAM1 => $limit,
-        ];
-        return $this->container->get('router')
-            ->generate($route, array_merge($params, $extraParams));
+        ]);
+
+        return $this->container->get('router')->generate($route, $params);
     }
 
     /***************************************/
