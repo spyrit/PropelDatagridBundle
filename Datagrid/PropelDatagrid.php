@@ -416,7 +416,6 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     /**
      * @param type $name
      * @param type $params
-     * @return self
      */
     public function export($name, $params = [])
     {
@@ -634,7 +633,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
 
     /**
      * Shortcut to return the request service.
-     * @return \Symfony\Component\HttpFoundation\Request
+     * @return \Symfony\Component\HttpFoundation\Session\SessionInterface
      */
     protected function getSession()
     {
