@@ -583,9 +583,15 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         return $this->getRequest()->get(self::PARAM1, $default);
     }
 
-    protected function getRequestedSortOrder($default = null)
+    protected function getRequestedSortOrder($default = Criteria::ASC)
     {
-        return $this->getRequest()->get(self::PARAM2, $default);
+        $requested = strtolower($this->getRequest()->get(self::PARAM2, $default));
+
+        if (!in_array($requested, ['asc', 'desc'])) {
+            $requested = null;
+        }
+
+        return $requested ?? $default;
     }
 
     protected function getRequestedSortedColumnRemoval($default = null)
