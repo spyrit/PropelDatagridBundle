@@ -1,6 +1,6 @@
 {% macro sort(column, label, route, datagrid, extraParams = {}) %}
     {% if datagrid.isSortedColumn(column) %}
-        {% if datagrid.sortedColumnOrder(column) == 'desc' %} 
+        {% if datagrid.sortedColumnOrder(column) == 'desc' %}
             {% set order = 'asc' %}
             {% set icon = 'fa-sort-desc' %}
         {% else %}
@@ -10,18 +10,18 @@
     {% else %}
         {% set order = datagrid.defaultSortOrder %}
     {% endif %}
-    
+
     <a href="{{ datagrid.sortPath(route, column, order, extraParams) }}">
-        {{ label }} 
-    </a> 
-    
+        {{ label }}
+    </a>
+
     <span class="sort-icon">
         <i class="fa fa-sort default-sort"></i>
         {% if datagrid.isSortedColumn(column) %}
             <i class="fa {{ icon }} active-sort"></i>
         {% endif %}
     </span>
-    
+
     {% if datagrid.sortCount > 1 and datagrid.isSortedColumn(column) %}
     <sup class="label label-success sort-label">
         {{ datagrid.sortedColumnPriority(column) + 1 }}
@@ -34,7 +34,7 @@
 
 {% macro columnActions(column, route, datagrid, extraParams = {}) %}
     <div class="column-actions">
-        <i class="fa fa-plus-circle add-column" data-toggle="popover" data-placement="bottom" data-html="true" data-trigger="click" data-content="{% spaceless %}
+        <i class="fa fa-plus-circle add-column" data-toggle="popover" data-placement="bottom" data-html="true" data-trigger="click" data-content="{% apply spaceless %}
         {% if datagrid.availableAppendableColumns|length > 0 %}
         {{ '<div class="pagination-limit">
             <div class="btn-group btn-group-xs m-b-sm">
@@ -50,6 +50,6 @@
         </div>'|escape('html') }}
         {% endif %}
         {{ ('<a class="btn btn-danger btn-xs text-sm btn-block" href="' ~ datagrid.removeColumnPath(route, column, extraParams) ~ '"><i class="fa fa-times"></i> Supprimer la colonne</a>')|escape('html') }}
-        {% endspaceless %}"></i>
+        {% endapply %}"></i>
     </div>
 {% endmacro %}
