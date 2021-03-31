@@ -16,9 +16,7 @@ abstract class CsvExport implements PropelExport
      * @var array
      */
     protected $params;
-    /**
-     * @var PropelQuery
-     */
+
     protected $query;
 
     public function __construct($query, $params)

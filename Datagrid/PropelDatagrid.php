@@ -5,8 +5,12 @@ namespace Spyrit\PropelDatagridBundle\Datagrid;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Collection\ObjectCollection;
 use Spyrit\PropelDatagridBundle\Datagrid\PropelDatagridInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormFactory;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Datagrid management class that support and handle pagination, sort, filter
@@ -34,13 +38,13 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     /**
      * The container witch is usefull to get Request parameters and differents
      * options and parameters.
-     * @var \Symfony\Component\DependencyInjection\Container
+     *
+     * @var ContainerInterface
      */
     protected $container;
 
     /**
      * The query that filter the results
-     * @var \PropelQuery
      */
     protected $query;
 
@@ -57,7 +61,6 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     /**
      * Results of the query (in fact this is a PropelPager object which contains
      * the result set and some methods to display pager and extra things)
-     * @var \PropelPager
      */
     protected $results;
 
@@ -69,7 +72,6 @@ abstract class PropelDatagrid implements PropelDatagridInterface
 
     /**
      * Options that you can use in your Datagrid methods if you need
-     * @var array
      */
     protected $options = [
         'multi_sort' => false,
@@ -83,13 +85,10 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         $this->buildForm();
     }
 
-    /**
-     * @param type $container
-     * @return \self
-     */
-    public static function create($container, $options = [])
+    public static function create($container, $options = []): self
     {
         $class = get_called_class();
+
         return new $class($container, $options);
     }
 
@@ -630,27 +629,24 @@ abstract class PropelDatagrid implements PropelDatagridInterface
 
     /**
      * Shortcut to return the request service.
-     * @return \Symfony\Component\HttpFoundation\Request
      */
-    protected function getRequest()
+    protected function getRequest(): Request
     {
         return $this->container->get('request_stack')->getCurrentRequest();
     }
 
     /**
      * Shortcut to return the request service.
-     * @return \Symfony\Component\HttpFoundation\Session\SessionInterface
      */
-    protected function getSession()
+    protected function getSession(): SessionInterface
     {
         return $this->container->get('session');
     }
 
     /**
      * return the Form Factory Service
-     * @return \Symfony\Component\Form\FormFactory
      */
-    protected function getFormFactory()
+    protected function getFormFactory(): FormFactory
     {
         return $this->container->get('form.factory');
     }
@@ -683,11 +679,8 @@ abstract class PropelDatagrid implements PropelDatagridInterface
 
     /**
      * Generate pagination route
-     * @param type $route
-     * @param type $extraParams
-     * @return string
      */
-    public function getPaginationPath($route, $page, $extraParams = [])
+    public function getPaginationPath($route, $page, $extraParams = []): string
     {
         $params = array_merge($extraParams, [
             self::ACTION => self::ACTION_PAGE,
@@ -700,11 +693,8 @@ abstract class PropelDatagrid implements PropelDatagridInterface
 
     /**
      * Generate reset route for the button view
-     * @param type $route
-     * @param type $extraParams
-     * @return string
      */
-    public function getResetPath($route, $extraParams = [])
+    public function getResetPath($route, $extraParams = []): string
     {
         $params = array_merge($extraParams, [
             self::ACTION => self::ACTION_RESET,
@@ -717,13 +707,8 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     /**
      * Generate sorting route for a given column to be displayed in view
      * @todo Remove the order parameter and ask to the datagrid to guess it ?
-     * @param type $route
-     * @param type $column
-     * @param type $order
-     * @param type $extraParams
-     * @return string
      */
-    public function getSortPath($route, $column, $order, $extraParams = [])
+    public function getSortPath($route, $column, $order, $extraParams = []): string
     {
         $params = array_merge($extraParams, [
             self::ACTION => self::ACTION_SORT,
@@ -737,12 +722,8 @@ abstract class PropelDatagrid implements PropelDatagridInterface
 
     /**
      * Generate remove sort route for a given column to be displayed in view
-     * @param type $route
-     * @param type $column
-     * @param type $extraParams
-     * @return string
      */
-    public function getRemoveSortPath($route, $column, $extraParams = [])
+    public function getRemoveSortPath($route, $column, $extraParams = []): string
     {
         $params = array_merge($extraParams, [
             self::ACTION => self::ACTION_REMOVE_SORT,
@@ -755,11 +736,6 @@ abstract class PropelDatagrid implements PropelDatagridInterface
 
     /**
      * Generate new column route for a given column to be displayed in view
-     * @param type $route
-     * @param type $column
-     * @param type $precedingColumn
-     * @param type $extraParams
-     * @return type
      */
     public function getNewColumnPath($route, $newColumn, $precedingColumn, $extraParams = [])
     {
@@ -775,11 +751,6 @@ abstract class PropelDatagrid implements PropelDatagridInterface
 
     /**
      * Generate remove column route for a given column to be displayed in view
-     * @param type $route
-     * @param type $column
-     * @param type $precedingColumn
-     * @param type $extraParams
-     * @return type
      */
     public function getRemoveColumnPath($route, $column, $extraParams = [])
     {
@@ -794,11 +765,6 @@ abstract class PropelDatagrid implements PropelDatagridInterface
 
     /**
      * Generate max per page route to be displayed in view
-     * @param type $route
-     * @param type $column
-     * @param type $precedingColumn
-     * @param type $extraParams
-     * @return type
      */
     public function getMaxPerPagePath($route, $limit, $extraParams = [])
     {
@@ -815,10 +781,6 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     /** Batch feature for mass actions *****/
     /***************************************/
 
-    /**
-     *
-     * @return type
-     */
     public function getBatchData()
     {
         return (array) json_decode(
@@ -828,10 +790,8 @@ abstract class PropelDatagrid implements PropelDatagridInterface
 
     /**
      * Test if the record is checked
-     * @param type $identifier The record identifier
-     * @return boolean
      */
-    public function isBatchChecked($identifier)
+    public function isBatchChecked($identifier): bool
     {
         $data = $this->getBatchData();
         if ($data) {
@@ -848,9 +808,8 @@ abstract class PropelDatagrid implements PropelDatagridInterface
 
     /**
      * Test if all records are checked
-     * @return boolean
      */
-    public function hasAllCheckedBatch()
+    public function hasAllCheckedBatch(): bool
     {
         $data = $this->getBatchData();
         if ($data) {
@@ -867,9 +826,8 @@ abstract class PropelDatagrid implements PropelDatagridInterface
 
     /**
      * Test if at least one record is checked.
-     * @return boolean
      */
-    public function hasCheckedBatch()
+    public function hasCheckedBatch(): bool
     {
         $data = $this->getBatchData();
         if ($data) {
