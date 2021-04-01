@@ -39,5 +39,11 @@
     "autoload": {
         "psr-0": { "Spyrit\\PropelDatagridBundle": "" }
     },
-    "target-dir": "Spyrit/PropelDatagridBundle"
+    "target-dir": "Spyrit/PropelDatagridBundle",
+    "repositories": [
+      {
+        "type": "git",
+        "url": "https://github.com/gharlan/PropelBundle"
+      }
+    ]
 }

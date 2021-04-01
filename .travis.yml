@@ -4,7 +4,6 @@ before_install:
   - echo "memory_limit=2G" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
 
 php:
-    - 7.1
     - 7.2
     - 7.3
     - 7.4
