@@ -4,7 +4,6 @@ namespace Spyrit\PropelDatagridBundle\Datagrid;
 
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Collection\ObjectCollection;
-use Spyrit\PropelDatagridBundle\Datagrid\PropelDatagridInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -206,6 +205,11 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         return $this;
     }
 
+    private function camelize(string $word): string
+    {
+        return str_replace(' ', '', ucwords(preg_replace('/[^A-Z^a-z^0-9]+/', ' ', $word)));
+    }
+
     private function applyFilter($data)
     {
         foreach ($data as $key => $value) {
@@ -218,7 +222,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
             }
 
             if (!$empty) {
-                $method = 'filterBy'.$this->container->get('spyrit.util.inflector')->camelize($key);
+                $method = 'filterBy'.$this->camelize($key);
                 $type = $this->filter->getType($key);
 
                 switch ($type) {
