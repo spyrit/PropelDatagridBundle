@@ -4,19 +4,20 @@ namespace Spyrit\PropelDatagridBundle\Datagrid;
 
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Collection\ObjectCollection;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Datagrid management class that support and handle pagination, sort, filter
  * and now, export actions.
  * @author Maxime CORSON <maxime.corson@spyrit.net>
  */
-abstract class PropelDatagrid implements PropelDatagridInterface
+class PropelDatagrid implements PropelDatagridInterface
 {
     const ACTION                = 'action';
     const ACTION_DATAGRID       = 'datagrid';
@@ -34,13 +35,19 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     const PARAM1 = 'param1';
     const PARAM2 = 'param2';
 
-    /**
-     * The container witch is usefull to get Request parameters and differents
-     * options and parameters.
-     *
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected $request_stack;
+    protected $session;
+    protected $form_factory;
+    protected $router;
+
+    /** @var string */
+    protected $name;
+
+    /** @var array */
+    protected $filters;
+
+    /** @var string */
+    protected $defaultSortColumn;
 
     /**
      * The query that filter the results
@@ -76,19 +83,20 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         'multi_sort' => false,
     ];
 
-    public function __construct($container, $options = [])
-    {
-        $this->container = $container;
+    public function __construct(
+        RequestStack $requestStack,
+        SessionInterface $session,
+        FormFactoryInterface $formFactory,
+        RouterInterface $router,
+        string $name,
+        array $options = []
+    ) {
+        $this->request_stack = $requestStack;
+        $this->session = $session;
+        $this->form_factory = $formFactory;
+        $this->router = $router;
+        $this->name = $name;
         $this->options = array_merge($this->options, $options);
-        $this->query = $this->configureQuery();
-        $this->buildForm();
-    }
-
-    public static function create($container, $options = []): self
-    {
-        $class = get_called_class();
-
-        return new $class($container, $options);
     }
 
     public function execute()
@@ -142,7 +150,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
 
     private function isRequestedDatagrid()
     {
-        return ($this->getRequestedDatagrid() == $this->getName());
+        return $this->getRequestedDatagrid() === $this->getName();
     }
 
     private function isRequestedAction($action)
@@ -259,9 +267,9 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         }
     }
 
-    protected function buildForm()
+    public function buildForm()
     {
-        $filters = $this->configureFilter();
+        $filters = $this->filters;
 
         if (!empty($filters)) {
             $this->filter = new FilterObject($this->getFormFactory(), $this->getName());
@@ -276,6 +284,8 @@ abstract class PropelDatagrid implements PropelDatagridInterface
             }
             $this->configureFilterBuilder($this->filter->getBuilder());
         }
+
+        return $this;
     }
 
     public function setFilterValue($name, $value)
@@ -285,9 +295,11 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         $this->setSessionValue('filter', $filters);
     }
 
-    public function configureFilter()
+    public function setFilters(array $filters)
     {
-        return [];
+        $this->filters = $filters;
+
+        return $this;
     }
 
     protected function getDefaultFilters()
@@ -298,6 +310,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     public function resetFilters()
     {
         $this->removeSessionValue('filter');
+
         return $this;
     }
 
@@ -309,6 +322,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     private function setSessionFilter($value)
     {
         $this->setSessionValue('filter', $value);
+
         return $this;
     }
 
@@ -416,11 +430,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     /** Export features here *********/
     /*********************************/
 
-    /**
-     * @param type $name
-     * @param type $params
-     */
-    public function export($name, $params = [])
+    public function export(string $name, array $params = [])
     {
         $class = $this->getExport($name);
         $this->filter();
@@ -430,7 +440,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         return $export->execute();
     }
 
-    protected function getExport($name)
+    protected function getExport(string $name)
     {
         $exports = $this->getExports();
         if (!isset($exports[$name])) {
@@ -631,28 +641,19 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     /** Global service shortcuts *****/
     /*********************************/
 
-    /**
-     * Shortcut to return the request service.
-     */
     protected function getRequest(): Request
     {
-        return $this->container->get('request_stack')->getCurrentRequest();
+        return $this->request_stack->getCurrentRequest();
     }
 
-    /**
-     * Shortcut to return the request service.
-     */
     protected function getSession(): SessionInterface
     {
-        return $this->container->get('session');
+        return $this->session;
     }
 
-    /**
-     * return the Form Factory Service
-     */
-    protected function getFormFactory(): FormFactory
+    protected function getFormFactory(): FormFactoryInterface
     {
-        return $this->container->get('form.factory');
+        return $this->form_factory;
     }
 
     public function isFiltered()
@@ -668,6 +669,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     public function setQuery($query)
     {
         $this->query = $query;
+
         return $this;
     }
 
@@ -692,7 +694,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
             self::PARAM1 => $page,
         ]);
 
-        return $this->container->get('router')->generate($route, $params);
+        return $this->router->generate($route, $params);
     }
 
     /**
@@ -705,7 +707,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
             self::ACTION_DATAGRID => $this->getName(),
         ]);
 
-        return $this->container->get('router')->generate($route, $params);
+        return $this->router->generate($route, $params);
     }
 
     /**
@@ -721,7 +723,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
             self::PARAM2 => $order,
         ]);
 
-        return $this->container->get('router')->generate($route, $params);
+        return $this->router->generate($route, $params);
     }
 
     /**
@@ -735,7 +737,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
             self::PARAM1 => $column,
         ]);
 
-        return $this->container->get('router')->generate($route, $params);
+        return $this->router->generate($route, $params);
     }
 
     /**
@@ -750,7 +752,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
             self::PARAM2 => $precedingColumn,
         ]);
 
-        return $this->container->get('router')->generate($route, $params);
+        return $this->router->generate($route, $params);
     }
 
     /**
@@ -764,7 +766,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
             self::PARAM1 => $column,
         ]);
 
-        return $this->container->get('router')->generate($route, $params);
+        return $this->router->generate($route, $params);
     }
 
     /**
@@ -778,7 +780,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
             self::PARAM1 => $limit,
         ]);
 
-        return $this->container->get('router')->generate($route, $params);
+        return $this->router->generate($route, $params);
     }
 
     /***************************************/
@@ -844,5 +846,29 @@ abstract class PropelDatagrid implements PropelDatagridInterface
             }
         }
         return false;
+    }
+
+    public function getDefaultSortColumn()
+    {
+        return $this->defaultSortColumn;
+    }
+
+    public function setDefaultSortColumn(string $defaultSortColumn)
+    {
+        $this->defaultSortColumn = $defaultSortColumn;
+
+        return $this;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
     }
 }

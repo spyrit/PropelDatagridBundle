@@ -1,0 +1,3 @@
+services:
+    Spyrit\PropelDatagridBundle\Datagrid\PropelDatagridFactory:
+            arguments: ["@request_stack", "@session", "@form.factory", "@router"]

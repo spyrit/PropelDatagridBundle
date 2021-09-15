@@ -7,13 +7,9 @@ namespace Spyrit\PropelDatagridBundle\Datagrid;
  */
 interface PropelDatagridInterface
 {
-    public function configureQuery();
-    
     public function getDefaultSortColumn();
-    
-    public function configureFilter();
-    
+
     public function getSessionName();
-    
+
     public function getName();
 }
