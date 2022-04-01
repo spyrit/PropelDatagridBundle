@@ -417,8 +417,8 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     /*********************************/
 
     /**
-     * @param type $name
-     * @param type $params
+     * @param string $name
+     * @param array  $params
      */
     public function export($name, $params = [])
     {
