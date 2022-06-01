@@ -19,24 +19,22 @@ Still skeptical ? Let's see how it works !
 Since composer is the simplest and fastest way to install dependencies, the only way to install this bundle automatically is to add the following line to your dependencies
 
 
-	"require": {
-    	...
-    	"spyrit/propel-datagrid-bundle": "dev-master"
-    	...
-	},
+    composer require spyrit/propel-datagrid-bundle
 
 
-* Branches 1.x are for Propel1 and Symfony2
+* Branches 1.x (unmaintained) are for Propel1 and Symfony2
     - Branch 1.0 is for backward-compatibility with old projects (PHP < 5.4).
     - Branch 1.1 requires PHP-5.4+ for `csanquer/colibri-csv 1.2`
     - Branch 1.2 integrates new functionnalities like dynamic max-per-page value
     - Branch 1.3 implements batch (mass) actions
-* Branches 2.x are for Propel2 and Symfony2
+* Branches 2.x (unmaintained) are for Propel2 and Symfony2
     - Branch 2.0 is for backward-compatibility with old projects (PHP < 5.4).
     - Branch 2.1 requires PHP-5.4+ for `csanquer/colibri-csv` 1.2
     - Branch 2.2 integrates new functionnalities like dynamic max-per-page value
     - Branch 2.3 implements batch (mass) actions
-* Branches 3.x are for Propel2 and Symfony3
+* Branch 3.0 (unmaintained) is for Propel2 and Symfony3
+* Branch 4.0 (maintained) is for Propel2 and Symfony4
+* Branch 5.0 (maintained) is for Propel2 and Symfony5
 
 ### Enable the bundle
 
@@ -117,9 +115,9 @@ The configureQuery method must return a predefined PropelQuery object (example: 
 //...
 public function configureQuery()
 {
-	return BookQuery::create()
+    return BookQuery::create()
         ->joinWith('Author', \Criteria::LEFT_JOIN)
-    	->joinWith('Publisher', \Criteria::LEFT_JOIN)
+        ->joinWith('Publisher', \Criteria::LEFT_JOIN)
     ;
 }
 ```
