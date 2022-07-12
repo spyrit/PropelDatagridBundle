@@ -48,7 +48,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     protected $query;
 
     /**
-     * @var FilterObject
+     * @var ?FilterObject
      */
     protected $filter;
 
@@ -188,18 +188,20 @@ abstract class PropelDatagrid implements PropelDatagridInterface
         }
 
         $this->isFiltered = false;
-        $this->filter->submit($data);
-        $form = $this->filter->getForm();
-        $formData = $form->getData();
+        if ($this->filter) {
+            $this->filter->submit($data);
+            $form = $this->filter->getForm();
+            $formData = $form->getData();
 
-        if ($form->isValid()) {
-            if (in_array(
-                $this->getRequest()->getMethod(),
-                array_map('strtoupper', $this->getAllowedFilterMethods())
-            )) {
-                $this->setSessionValue('filter', $data);
+            if ($form->isValid()) {
+                if (in_array(
+                    $this->getRequest()->getMethod(),
+                    array_map('strtoupper', $this->getAllowedFilterMethods())
+                )) {
+                    $this->setSessionValue('filter', $data);
+                }
+                $this->applyFilter($formData);
             }
-            $this->applyFilter($formData);
         }
 
         return $this;
