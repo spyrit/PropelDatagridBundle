@@ -265,19 +265,17 @@ abstract class PropelDatagrid implements PropelDatagridInterface
     {
         $filters = $this->configureFilter();
 
-        if (!empty($filters)) {
-            $this->filter = new FilterObject($this->getFormFactory(), $this->getName());
+        $this->filter = new FilterObject($this->getFormFactory(), $this->getName());
 
-            foreach ($filters as $name => $filter) {
-                $this->filter->add(
-                    $name,
-                    $filter['type'],
-                    isset($filter['options'])? $filter['options'] : [],
-                    isset($filter['value'])? $filter['value'] : null
-                );
-            }
-            $this->configureFilterBuilder($this->filter->getBuilder());
+        foreach ($filters as $name => $filter) {
+            $this->filter->add(
+                $name,
+                $filter['type'],
+                isset($filter['options'])? $filter['options'] : [],
+                isset($filter['value'])? $filter['value'] : null
+            );
         }
+        $this->configureFilterBuilder($this->filter->getBuilder());
     }
 
     public function setFilterValue($name, $value)
