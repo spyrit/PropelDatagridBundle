@@ -3,6 +3,7 @@
 namespace Spyrit\PropelDatagridBundle\Datagrid;
 
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Exception\UnknownColumnException;
 use Propel\Runtime\Collection\ObjectCollection;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -349,7 +350,11 @@ abstract class PropelDatagrid implements PropelDatagridInterface
 
         foreach ($sort as $column => $order) {
             $method = 'orderBy'.ucfirst($column);
-            @$this->getQuery()->{$method}($order); // fail silently if the method doesn't exist
+            try {
+                $this->getQuery()->{$method}($order);
+            } catch (UnknownColumnException $e) {
+                // fail silently if the method doesn't exist
+            }
         }
     }
 
