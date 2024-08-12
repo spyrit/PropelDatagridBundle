@@ -33,8 +33,9 @@ Since composer is the simplest and fastest way to install dependencies, the only
     - Branch 2.2 integrates new functionnalities like dynamic max-per-page value
     - Branch 2.3 implements batch (mass) actions
 * Branch 3.0 (unmaintained) is for Propel2 and Symfony3
-* Branch 4.0 (maintained) is for Propel2 and Symfony4
+* Branch 4.0 (unmaintained) is for Propel2 and Symfony4
 * Branch 5.0 (maintained) is for Propel2 and Symfony5
+* Branch 6.0 (maintained) is for Propel2 and Symfony6
 
 ### Enable the bundle
 
