@@ -12,8 +12,14 @@ web/bundles/*
 app/config/parameters.yml
 
 # Propel files
+Tests/Fixtures/App/app/config/parameters.yml
 Tests/Fixtures/App/src/Spyrit/TestBundle/Model/Base
 Tests/Fixtures/App/src/Spyrit/TestBundle/Model/Map
+
+# PHPUnit files
+phpunit.xml
+.phpunit.cache/
+.phpunit.result.cache
 
 # Composer
 composer.phar
