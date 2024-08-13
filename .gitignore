@@ -24,3 +24,4 @@ phpunit.xml
 # Composer
 composer.phar
 phpunit.phar
+composer.lock
