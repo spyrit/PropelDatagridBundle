@@ -27,10 +27,10 @@
     },
     "require": {
         "php": ">=7.4.0",
-        "symfony/dependency-injection": "~4.0|~5.0|~6.0",
-        "symfony/form": "~4.0|~5.0|~6.0",
-        "symfony/framework-bundle": "~4.0|~5.0|~6.0",
-        "symfony/http-foundation": "~4.0|~5.0|~6.0",
+        "symfony/dependency-injection": "~5.0|~6.0",
+        "symfony/form": "~5.0|~6.0",
+        "symfony/framework-bundle": "~5.0|~6.0",
+        "symfony/http-foundation": "~5.0|~6.0",
         "symfony/monolog-bundle": "~2.4|~3.0",
         "propel/propel": "^2.0@alpha|2.0.x-dev",
         "spyrit/colibri-csv": "^1.3"
