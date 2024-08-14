@@ -425,6 +425,9 @@ abstract class PropelDatagrid implements PropelDatagridInterface
      */
     public function export($name, $params = [])
     {
+        $this->query = $this->configureQuery();
+        $this->buildForm();
+
         $class = $this->getExport($name);
         $this->filter();
         $this->sort();
