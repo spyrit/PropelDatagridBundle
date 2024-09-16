@@ -33,49 +33,31 @@ Since composer is the simplest and fastest way to install dependencies, the only
     - Branch 2.2 integrates new functionnalities like dynamic max-per-page value
     - Branch 2.3 implements batch (mass) actions
 * Branch 3.0 (unmaintained) is for Propel2 and Symfony3
-* Branch 4.0 (maintained) is for Propel2 and Symfony4
+* Branch 4.0 (unmaintained) is for Propel2 and Symfony4
 * Branch 5.0 (maintained) is for Propel2 and Symfony5
+* Branch 6.0 (maintained) is for Propel2 and Symfony6
+  -  requires PHP-7.4+
+  -  requires `spyrit/colibri-csv` 1.3
+  -  recommends the usage of PropelBundle fork in your composer.json https://github.com/SkyFoxvn/PropelBundle
+  -  BC: DataGrid no longer depends of `Symfony\Component\DependencyInjection\ContainerInterface`.
+     It depends of 
+      - `Symfony\Component\HttpFoundation\RequestStack`
+      - `Symfony\Component\Form\FormFactoryInterface`
+      - `Symfony\Component\Routing\RouterInterface`
+  -  BC: Use service autowiring, see https://github.com/spyrit/PropelDatagridBundle?tab=readme-ov-file#declare-your-datagrid---the-controllers-job 
 
 ### Enable the bundle
 
-You won't be surprised to be asked to add the following line in your Kernel :
+Enable the bundle in your application
 
 ```php
-// app/AppKernel.php
+// config/bundles.php
 <?php
-    // ...
-    public function registerBundles()
-    {
-        $bundles = array(
-            // ...
-            // don't forget the PropelBundle too
-            new Spyrit\PropelDatagridBundle\SpyritPropelDatagridBundle(),
-        );
-    }
-```
 
-### Try the demo
-
-A demo is included in the demo branch which is updated with the master updates. To try it, follow these few steps :
-
-1. Build your model
-```bash
-app/console propel:build
+return [
+    ...
+    Spyrit\PropelDatagridBundle\SpyritPropelDatagridBundle::class => ['all' => true],
 ```
-1. Create the database structure
-```bash
-app/console propel:sql:insert
-```
-1. Publish assets in your web directory (in symlink mode?)
-```bash
-app/console assets:install --symlink
-```
-1. Add a route to the PropelDatagridBundle routing file :
-```yml
-spyrit_propel_datagrid:
-    resource: "@SpyritPropelDatagridBundle/Resources/config/routing.yml"
-```
-If you used this previous code sample and didn't add a prefix to the route, you should access to the demo with this URL : <protocole>://<your_dommain>/datagrid/demo/book/list
 
 ## Usage
 
@@ -96,15 +78,37 @@ class BookDatagrid extends PropelDatagrid
 {
     public function configureQuery()
     {
+        return BookQuery::create();
     }
 
     public function getDefaultSortColumn()
     {
+        return 'id';
     }
 
     public function getName()
     {
+        return 'book';
     }
+    
+    public function configureFilter()
+    {
+        return [
+            'id' => [
+                'type' => IntegerType::class,
+                'options' => [
+                    'label' => '#',
+                    'required' => false,
+                ],
+            ],
+            'title' => [
+                'type' => TextType::class,
+                'options' => [
+                    'label' => 'Title',
+                ],
+            ]
+        ];
+      }
 }
 ```
 
@@ -125,11 +129,69 @@ public function configureQuery()
 
 ### Declare your datagrid - The Controller's Job
 
-Todo
+```
+<?php
+
+namespace App\Controller;
+
+use App\Propel\Annonce;
+use App\Propel\AnnonceQuery;
+use App\Datagrid\BookDatagrid;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+
+#[Route('/books')]
+class BookController extends AbstractController
+{
+    #[Route('/')]
+    public function list(BookDatagrid $annonceDatagrid): Response
+    {
+        $datagrid = $annonceDatagrid->execute();
+
+        return $this->render('book/list.html.twig', [
+            'datagrid' => $datagrid,
+        ]);
+    }
+}
+```
 
 ### Display your datagrid - The view's Job and yours (or designer)
 
-Todo
+```twig
+{% extends "base.html.twig" %}
+
+{% import "@SpyritPropelDatagrid/Datagrid/macros.html.twig" as macros %}
+
+{% block body %}
+
+  {% set form = datagrid.filterFormView %}
+  <form method="post">
+      {{ form_widget(form.id) }}
+      {{ form_widget(form.title) }}
+      
+      {{ form_errors(form) }}
+      {{ form_rest(form) }}
+  </form>
+  
+  <table>
+      <thead>
+        <tr>
+            <th>{{ macros.sort('id', "#", route, datagrid) }}</th>
+            <th>{{ macros.sort('title', "Title", route, datagrid) }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for book in datagrid.results %}
+          <tr>
+              <td>{{ book.id }}</td>
+              <td>{{ book.title }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+  </table>
+{% endblock %}
+```
 
 ### Export datagrid data
 
