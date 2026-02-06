@@ -93,7 +93,7 @@ abstract class PropelDatagrid implements PropelDatagridInterface
 
     public function execute()
     {
-        $this->query = $this->configureQuery();
+        $this->query = $this->query ?: $this->configureQuery();
         $this->buildForm();
 
         $this->preExecute();
